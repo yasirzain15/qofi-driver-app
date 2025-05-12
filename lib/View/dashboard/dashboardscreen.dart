@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qufi_driver_app/Core/Constants/app_colors.dart';
 import 'package:qufi_driver_app/View/orderdetails/orderdetailsscreen.dart';
+import 'package:qufi_driver_app/View/orderlist/orderlist.dart';
 
 import '../setting/settingview.dart';
 import 'widgets/dashboardhome.dart';
@@ -15,10 +16,10 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   int _currentIndex = 0;
 
-  final List<Widget> _screens = const [
-    DashboardHomeContent(), // Self content
-    OrderDetailsScreen(),
-    SettingsScreen(),
+  final List<Widget> _screens = [
+    const DashboardHomeContent(), // Self content
+    OrdersScreen(),
+    const SettingsScreen(),
   ];
 
   @override

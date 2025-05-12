@@ -12,7 +12,9 @@ class OrdersScreen extends StatelessWidget {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
+          backgroundColor: Colors.white,
           title: Text('Orders'),
           bottom: TabBar(tabs: [Tab(text: 'Ongoing'), Tab(text: 'Completed')]),
         ),
@@ -38,6 +40,7 @@ class OrdersList extends StatelessWidget {
       itemCount: orders.length,
       itemBuilder: (context, index) {
         return Card(
+          color: Colors.white,
           elevation: 4,
           margin: EdgeInsets.all(10),
           shape: RoundedRectangleBorder(

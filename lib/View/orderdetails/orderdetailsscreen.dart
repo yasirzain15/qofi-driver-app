@@ -29,12 +29,11 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
-          title: Text('Order Details'),
+          title: Text('Orders', style: TextStyle(fontWeight: FontWeight.bold)),
           backgroundColor: AppColors.background,
         ),
         body: Column(
           children: [
-            _buildProfileSection(),
             _buildTabBar(),
             Expanded(
               child: TabBarView(
@@ -47,25 +46,6 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildProfileSection() {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 16),
-      child: Column(
-        children: [
-          CircleAvatar(
-            radius: 50,
-            backgroundImage: AssetImage("assets/profile.png"),
-          ),
-          SizedBox(height: 8),
-          Text(
-            "James Smith",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-        ],
       ),
     );
   }
