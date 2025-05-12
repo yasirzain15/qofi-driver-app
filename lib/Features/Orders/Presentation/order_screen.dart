@@ -13,7 +13,10 @@ class OrdersScreen extends StatelessWidget {
         backgroundColor: AppColors.background,
         appBar: AppBar(
           backgroundColor: AppColors.background,
-          title: const Text('Orders'),
+          title: const Text(
+            'Orders',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
           bottom: const TabBar(
             labelColor: AppColors.text,
             unselectedLabelColor: AppColors.subText,
