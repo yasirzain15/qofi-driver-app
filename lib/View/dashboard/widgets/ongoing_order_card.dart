@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../orders/presentation/widgets/order_request_card.dart';
+import 'package:qufi_driver_app/View/order_request_card.dart';
+import '../../../core/constants/app_colors.dart';
 
 class OngoingOrderCard extends StatelessWidget {
   const OngoingOrderCard({super.key});

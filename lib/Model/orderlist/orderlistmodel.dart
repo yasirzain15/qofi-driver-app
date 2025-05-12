@@ -2,7 +2,7 @@ class OrderModel {
   final String orderId;
   final String customer;
   final String address;
-  final String status;
+  late final String status;
 
   OrderModel({
     required this.orderId,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:qufi_driver_app/features/Dashboard/Presentation/dashboard_screen.dart';
+
+import 'View/dashboard/dashboardscreen.dart';
 
 void main() {
   runApp(MyApp());

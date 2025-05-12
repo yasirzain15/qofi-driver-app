@@ -1,7 +1,7 @@
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-import 'package:qufi_driver_app/model/settingmodel.dart';
+import 'package:qufi_driver_app/Model/setting/settingmodel.dart';
 
 class SettingsController {
   final SettingsModel model = SettingsModel();

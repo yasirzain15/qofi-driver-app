@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:qufi_driver_app/model/orderlistmodel.dart';
+import 'package:qufi_driver_app/Controller/orderdetails/orderdetail.dart';
 
-import '../controller/orderdetail.dart';
+import 'package:qufi_driver_app/Model/orderdeatils/orderdetailsmodel.dart';
 
 class OrderDetailsScreen extends StatefulWidget {
   const OrderDetailsScreen({super.key});

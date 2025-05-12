@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:qufi_driver_app/controller/settingcontroller.dart';
+import 'package:qufi_driver_app/Controller/setting/settingcontroller.dart';
+import 'package:qufi_driver_app/Model/setting/settingmodel.dart';
 
-import '../model/settingmodel.dart';
+import 'Widgets/profileimage.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -80,13 +81,7 @@ class SettingsScreenState extends State<SettingsScreen> {
       ),
       body: Column(
         children: [
-          CircleAvatar(
-            radius: 100,
-            backgroundImage:
-                model.image != null
-                    ? FileImage(model.image!)
-                    : AssetImage("assets/profile.png") as ImageProvider,
-          ),
+          ProfileImage(model: model),
           SizedBox(height: 10),
           Text(
             model.name,

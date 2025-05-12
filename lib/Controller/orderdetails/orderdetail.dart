@@ -1,4 +1,4 @@
-import '../model/orderlistmodel.dart';
+import 'package:qufi_driver_app/Model/orderdeatils/orderdetailsmodel.dart';
 
 class OrderController {
   // Private order lists

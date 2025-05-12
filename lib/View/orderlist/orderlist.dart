@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:qufi_driver_app/controller/orderlistcontroller.dart'
-    show OrderController;
-
-import '../model/orderlistmodel.dart';
+import 'package:qufi_driver_app/Controller/orderlist/orderlistcontroller.dart';
+import 'package:qufi_driver_app/Model/orderdeatils/orderdetailsmodel.dart';
 
 class OrdersScreen extends StatelessWidget {
   final OrderController controller = OrderController();
