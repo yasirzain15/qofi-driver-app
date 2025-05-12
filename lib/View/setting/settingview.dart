@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qufi_driver_app/Controller/setting/settingcontroller.dart';
+import 'package:qufi_driver_app/Core/Constants/app_colors.dart';
 import 'package:qufi_driver_app/Model/setting/settingmodel.dart';
 
 import 'Widgets/profileimage.dart';
@@ -76,7 +77,11 @@ class SettingsScreenState extends State<SettingsScreen> {
     SettingsModel model = controller.model;
 
     return Scaffold(
+      backgroundColor: AppColors.background,
       appBar: AppBar(
+        backgroundColor: AppColors.background,
+        title: Text('Settings'),
+
         leading: InkWell(onTap: () {}, child: Icon(Icons.arrow_back_ios)),
       ),
       body: Column(

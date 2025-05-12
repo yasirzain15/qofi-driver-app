@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qufi_driver_app/Controller/orderdetails/orderdetail.dart';
+import 'package:qufi_driver_app/Core/Constants/app_colors.dart';
 
 import 'package:qufi_driver_app/Model/orderdeatils/orderdetailsmodel.dart';
 
@@ -26,7 +27,11 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        appBar: AppBar(title: Text('Order Details')),
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          title: Text('Order Details'),
+          backgroundColor: AppColors.background,
+        ),
         body: Column(
           children: [
             _buildProfileSection(),
@@ -140,6 +145,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
 
   Widget _buildOrderCard(OrderModel order) {
     return Card(
+      color: AppColors.card,
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
