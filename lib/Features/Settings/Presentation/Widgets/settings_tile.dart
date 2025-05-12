@@ -18,9 +18,7 @@ class SettingsTile extends StatelessWidget {
                 style: const TextStyle(color: AppColors.subText),
               )
               : const Icon(Icons.arrow_forward_ios, size: 16),
-      onTap: () {
-        // TODO: Add navigation or dialogs here
-      },
+      onTap: () {},
     );
   }
 }
