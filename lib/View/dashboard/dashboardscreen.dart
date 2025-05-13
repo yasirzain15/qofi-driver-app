@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:qufi_driver_app/Core/Constants/app_colors.dart';
-import 'package:qufi_driver_app/View/orderdetails/orderdetailsscreen.dart';
+
 import 'package:qufi_driver_app/View/orderlist/orderlist.dart';
 
 import '../setting/settingview.dart';
-import 'widgets/dashboardhome.dart';
+import '../../Widgets/Dasboard/dashboardhome.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});

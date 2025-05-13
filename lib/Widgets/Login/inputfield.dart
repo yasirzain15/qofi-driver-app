@@ -6,7 +6,8 @@ class InputField extends StatelessWidget {
   final bool isPassword;
   final TextInputType keyboardType;
 
-  InputField({
+  const InputField({
+    super.key,
     required this.controller,
     required this.label,
     this.isPassword = false,
@@ -19,7 +20,20 @@ class InputField extends StatelessWidget {
       controller: controller,
       obscureText: isPassword,
       keyboardType: keyboardType,
-      decoration: InputDecoration(labelText: label),
+      decoration: InputDecoration(
+        enabled: true,
+        labelText: label,
+        border: OutlineInputBorder(),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue, width: 1.0), // Thin border
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Colors.blue,
+            width: 2.0,
+          ), // Highlighted border when focused
+        ),
+      ),
       validator: (value) {
         if (value == null || value.isEmpty) {
           return '$label cannot be empty';
