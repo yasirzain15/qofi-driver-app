@@ -3,7 +3,7 @@ import 'package:qufi_driver_app/Controller/setting/settingcontroller.dart';
 import 'package:qufi_driver_app/Core/Constants/app_colors.dart';
 import 'package:qufi_driver_app/Model/setting/settingmodel.dart';
 
-import 'Widgets/profileimage.dart';
+import '../../Widgets/setting/profileimage.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});

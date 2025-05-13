@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qufi_driver_app/Controller/logincontroller.dart';
-import 'package:qufi_driver_app/View/login/widgets/custombutton.dart';
-import 'package:qufi_driver_app/View/login/widgets/inputfield.dart';
+import 'package:qufi_driver_app/Widgets/Login/custombutton.dart';
+import 'package:qufi_driver_app/Widgets/Login/inputfield.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
