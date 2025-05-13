@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:qufi_driver_app/Controller/authcontroller/auth_controller.dart';
-import 'package:qufi_driver_app/View/login/login_screen.dart';
+import 'package:qufi_driver_app/Services/driverdata.dart';
+import 'package:qufi_driver_app/View/login/login_screen.dart' show LoginScreen;
 
 import 'View/dashboard/dashboardscreen.dart';
 
 // void main() {
 //   runApp(MyApp());
 // }
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  AuthController authController = AuthController();
-  bool isDriverLoggedIn = await authController.isDriverLoggedIn();
+  final driver = await SharedPrefsService.getDriverData();
+  final bool isLoggedIn = driver != null;
 
-  runApp(
-    MaterialApp(home: isDriverLoggedIn ? DashboardScreen() : LoginScreen()),
-  );
+  runApp(MaterialApp(home: isLoggedIn ? DashboardScreen() : LoginScreen()));
 }
 
 class MyApp extends StatelessWidget {

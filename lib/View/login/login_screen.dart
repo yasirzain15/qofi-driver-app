@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:qufi_driver_app/Controller/logincontroller.dart';
+import 'package:qufi_driver_app/View/dashboard/dashboardscreen.dart';
+
 import 'package:qufi_driver_app/Widgets/Login/custombutton.dart';
 import 'package:qufi_driver_app/Widgets/Login/inputfield.dart';
+
+import '../../Controller/logincontroller.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,15 +19,30 @@ class _LoginScreenState extends State<LoginScreen> {
   final _usernameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
-  final LoginController _controller = LoginController();
+  final LoginController _controller =
+      LoginController(); // ✅ Connects LoginController
 
-  void _login() {
-    _controller.login(
+  void _login() async {
+    bool success = await _controller.login(
       context,
       _usernameController.text,
-      _phoneController.text,
       _passwordController.text,
+      _phoneController.text,
+      // ✅ No need for phone (API only requires username/password)
     );
+
+    if (success) {
+      Navigator.pushReplacement(
+        // ignore: use_build_context_synchronously
+        context,
+        MaterialPageRoute(builder: (context) => DashboardScreen()),
+      );
+    } else {
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Login failed! Please check credentials.")),
+      );
+    }
   }
 
   @override
@@ -40,18 +58,15 @@ class _LoginScreenState extends State<LoginScreen> {
               InputField(controller: _usernameController, label: 'Username'),
               SizedBox(height: 10),
               InputField(
-                controller: _phoneController,
-                label: 'Phone Number',
-                keyboardType: TextInputType.phone,
-              ),
-              SizedBox(height: 10),
-              InputField(
                 controller: _passwordController,
                 label: 'Password',
                 isPassword: true,
               ),
               SizedBox(height: 20),
-              CustomButton(text: 'Login', onPressed: _login),
+              CustomButton(
+                text: 'Login',
+                onPressed: _login,
+              ), // ✅ Calls `_login()`
             ],
           ),
         ),
