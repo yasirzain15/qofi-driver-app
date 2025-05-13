@@ -28,7 +28,6 @@ class _LoginScreenState extends State<LoginScreen> {
       _usernameController.text,
       _passwordController.text,
       _phoneController.text,
-      // ✅ No need for phone (API only requires username/password)
     );
 
     if (success) {
