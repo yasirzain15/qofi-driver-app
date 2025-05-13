@@ -13,7 +13,12 @@ void main() async {
   final driver = await SharedPrefsService.getDriverData();
   final bool isLoggedIn = driver != null;
 
-  runApp(MaterialApp(home: isLoggedIn ? DashboardScreen() : LoginScreen()));
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: isLoggedIn ? DashboardScreen() : LoginScreen(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
