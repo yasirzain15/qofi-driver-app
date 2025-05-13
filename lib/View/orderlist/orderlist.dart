@@ -18,6 +18,7 @@ class OrdersScreen extends StatelessWidget {
           title: Text('Orders'),
           bottom: TabBar(tabs: [Tab(text: 'Ongoing'), Tab(text: 'Completed')]),
         ),
+
         body: TabBarView(
           children: [
             OrdersList(controller.ongoingOrders),
@@ -41,7 +42,7 @@ class OrdersList extends StatelessWidget {
       itemBuilder: (context, index) {
         return Card(
           color: Colors.white,
-          elevation: 4,
+
           margin: EdgeInsets.all(10),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),

@@ -102,13 +102,9 @@ class SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildSettingButton(String label, VoidCallback onTap) {
-    return Container(
+    return Card(
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 5)],
-      ),
+      color: Colors.white,
       child: ListTile(
         title: Text(label, style: TextStyle(fontSize: 16)),
         trailing: Icon(Icons.arrow_forward_ios),
@@ -122,13 +118,9 @@ class SettingsScreenState extends State<SettingsScreen> {
     String value,
     VoidCallback onTap,
   ) {
-    return Container(
+    return Card(
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 5)],
-      ),
+      color: Colors.white,
       child: ListTile(
         title: Text(
           label,
