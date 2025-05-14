@@ -1,30 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:qufi_driver_app/Services/auth_services.dart';
+
 import 'package:qufi_driver_app/View/dashboard/dashboardscreen.dart';
 
 class LoginController {
+  final _authService = AuthService();
+
   Future<bool> login(
     BuildContext context,
     String username,
-    String phone,
     String password,
+    String text,
   ) async {
     try {
-      final response = await AuthService().login(username, password);
+      final response = await _authService.login(username, password);
 
       if (!response['success']) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Login failed! Invalid credentials.")),
-        );
+        _showSnackBar(context, "Login failed! Invalid credentials.");
         return false;
       }
 
       final token = response['token'];
-      if (token == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Token missing from response.")),
-        );
+      if (token == null || token.isEmpty) {
+        _showSnackBar(context, "Token missing from response.");
         return false;
       }
 
@@ -32,18 +31,24 @@ class LoginController {
         print("Login successful. Token: $token");
       }
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => DashboardScreen()),
-      );
+      Future.delayed(const Duration(milliseconds: 500), () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => DashboardScreen()),
+        );
+      });
 
       return true;
     } catch (e) {
       if (kDebugMode) print("Login error: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Unexpected error occurred.")),
-      );
+      _showSnackBar(context, "Unexpected error occurred.");
       return false;
     }
+  }
+
+  void _showSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 }

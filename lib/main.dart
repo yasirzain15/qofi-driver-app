@@ -1,28 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:qufi_driver_app/Services/driverdata.dart';
-import 'package:qufi_driver_app/View/login/login_screen.dart' show LoginScreen;
-
-import 'View/dashboard/dashboardscreen.dart';
-
-// void main() {
-//   runApp(MyApp());
-// }
+import 'package:qufi_driver_app/Services/storage_service.dart';
+import 'package:qufi_driver_app/View/dashboard/dashboardscreen.dart';
+import 'package:qufi_driver_app/View/login/login_screen.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  final driver = await SharedPrefsService.getDriverData();
-  final bool isLoggedIn = driver != null;
+  WidgetsFlutterBinding.ensureInitialized(); // Ensures async execution before runApp
 
-  runApp(
-    MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: isLoggedIn ? DashboardScreen() : LoginScreen(),
-    ),
-  );
+  final storageService = StorageService(); // Create instance
+  final credentials =
+      await storageService.getUserCredentials(); // Fetch saved credentials
+  final bool isLoggedIn = credentials['token'] != null; // Check if token exists
+
+  runApp(MyApp(isLoggedIn: isLoggedIn)); // Pass login state to MyApp
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isLoggedIn; // Stores login state
+
+  const MyApp({super.key, required this.isLoggedIn});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +25,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Qofi Driver',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: DashboardScreen(),
+      home:
+          isLoggedIn
+              ? DashboardScreen()
+              : LoginScreen(), // Show appropriate screen
     );
   }
 }
