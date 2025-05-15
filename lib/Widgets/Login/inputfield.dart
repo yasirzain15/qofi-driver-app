@@ -16,30 +16,35 @@ class InputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      obscureText: isPassword,
-      keyboardType: keyboardType,
-      decoration: InputDecoration(
-        enabled: true,
-        labelText: label,
-        border: OutlineInputBorder(),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue, width: 1.0), // Thin border
+    return Card(
+      elevation: 1,
+      color: Colors.white,
+      child: TextFormField(
+        controller: controller,
+        obscureText: isPassword,
+        decoration: InputDecoration(
+          fillColor: Colors.white,
+          border: InputBorder.none,
+          labelText: label,
+          filled: true,
+          // contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white, width: 2.0),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white, width: 2.0),
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: Colors.blue,
-            width: 2.0,
-          ), // Highlighted border when focused
-        ),
+
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return '$label cannot be empty';
+          }
+          return null;
+        },
       ),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return '$label cannot be empty';
-        }
-        return null;
-      },
     );
   }
 }

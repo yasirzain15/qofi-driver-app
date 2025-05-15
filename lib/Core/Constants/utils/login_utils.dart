@@ -4,7 +4,7 @@ class ValidationUtils {
     String phone,
     String password,
   ) {
-    if (username.isEmpty || phone.isEmpty || password.isEmpty) {
+    if (username.isEmpty || password.isEmpty) {
       return 'All fields are required';
     }
 
