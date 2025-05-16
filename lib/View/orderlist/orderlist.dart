@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qufi_driver_app/Controller/orderlist/orderlistcontroller.dart';
+import 'package:qufi_driver_app/Core/Constants/app_colors.dart';
 import 'package:qufi_driver_app/Model/orderdeatils/orderdetailsmodel.dart';
 
 class OrdersScreen extends StatelessWidget {
@@ -16,7 +17,11 @@ class OrdersScreen extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: Colors.white,
           title: Text('Orders'),
-          bottom: TabBar(tabs: [Tab(text: 'Ongoing'), Tab(text: 'Completed')]),
+          bottom: TabBar(
+            indicatorColor: Colors.blue[700],
+            labelColor: Colors.blue[700],
+            tabs: [Tab(text: 'Ongoing'), Tab(text: 'Completed')],
+          ),
         ),
 
         body: TabBarView(
@@ -41,7 +46,7 @@ class OrdersList extends StatelessWidget {
       itemCount: orders.length,
       itemBuilder: (context, index) {
         return Card(
-          color: Colors.white,
+          color: AppColors.background,
 
           margin: EdgeInsets.all(10),
           shape: RoundedRectangleBorder(
@@ -64,7 +69,7 @@ class OrdersList extends StatelessWidget {
                     ),
                     Text(
                       orders[index].status,
-                      style: TextStyle(fontSize: 16, color: Colors.blue),
+                      style: TextStyle(fontSize: 16, color: Colors.blue[700]),
                     ),
                   ],
                 ),

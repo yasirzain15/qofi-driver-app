@@ -86,7 +86,10 @@ class SettingsScreenState extends State<SettingsScreen> {
       ),
       body: Column(
         children: [
-          ProfileImage(model: model),
+          CircleAvatar(
+            radius: 50,
+            backgroundImage: AssetImage('assets/images/profile.png'),
+          ),
           SizedBox(height: 10),
           Text(
             model.name,

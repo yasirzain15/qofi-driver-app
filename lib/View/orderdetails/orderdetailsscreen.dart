@@ -107,7 +107,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.blue,
+              color: Colors.blue[900],
             ),
           ),
           SizedBox(height: 12),
