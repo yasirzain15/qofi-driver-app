@@ -1,0 +1,187 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:qufi_driver_app/Controller/completed_orders_controller.dart';
+import 'package:qufi_driver_app/Controller/ongoing_orders_controller.dart';
+import 'package:qufi_driver_app/Model/order_model.dart';
+import 'package:qufi_driver_app/widgets/orders_list.dart';
+import 'package:qufi_driver_app/widgets/profile_section.dart';
+
+class DriverDashboardScreen extends StatelessWidget {
+  const DriverDashboardScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(body: _DriverDashboardContent());
+  }
+}
+
+class _DriverDashboardContent extends StatefulWidget {
+  @override
+  State<_DriverDashboardContent> createState() =>
+      _DriverDashboardContentState();
+}
+
+class _DriverDashboardContentState extends State<_DriverDashboardContent> {
+  int _selectedIndex = 1; // Default to Orders tab
+  final Map<String, bool> _pickedStates = {};
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _fetchOrders());
+  }
+
+  Future<void> _fetchOrders() async {
+    final ongoingController = context.read<OngoingOrdersController>();
+    final completedController = context.read<CompletedOrdersController>();
+    // Replace with actual token (preferably from AuthController)
+    const token = 'your_token_here';
+
+    await Future.wait([
+      ongoingController.fetchOngoingOrders(token),
+      completedController.fetchCompletedOrders(token),
+    ]);
+  }
+
+  void _onItemTapped(int index) => setState(() => _selectedIndex = index);
+
+  void _onPickPressed(String orderId) => setState(() {
+    _pickedStates[orderId] = !(_pickedStates[orderId] ?? false);
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer2<OngoingOrdersController, CompletedOrdersController>(
+      builder: (context, ongoing, completed, _) {
+        final ongoingOrders =
+            ongoing.ongoingOrders?.data.driverOrders
+                .map(
+                  (order) => OrderModel.fromDriverOrder(
+                    order,
+                    'Ongoing',
+                    picked: _pickedStates[order.orderNo] ?? false,
+                  ),
+                )
+                .toList() ??
+            [];
+
+        final completedOrders =
+            completed.completedOrders
+                .map(
+                  (order) => OrderModel.fromCompletedOrder(
+                    order,
+                    'Completed',
+                    picked: _pickedStates[order.orderNo] ?? false,
+                  ),
+                )
+                .toList();
+
+        return _buildScaffold(
+          context,
+          ongoing,
+          completed,
+          ongoingOrders,
+          completedOrders,
+        );
+      },
+    );
+  }
+
+  Scaffold _buildScaffold(
+    BuildContext context,
+    OngoingOrdersController ongoing,
+    CompletedOrdersController completed,
+    List<OrderModel> ongoingOrders,
+    List<OrderModel> completedOrders,
+  ) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Driver Dashboard'),
+        backgroundColor: Colors.blue.shade800,
+        elevation: 0,
+      ),
+      body: _buildBody(ongoing, completed, ongoingOrders, completedOrders),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.dashboard),
+            label: 'Dashboard',
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: 'Orders'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBody(
+    OngoingOrdersController ongoing,
+    CompletedOrdersController completed,
+    List<OrderModel> ongoingOrders,
+    List<OrderModel> completedOrders,
+  ) {
+    if (ongoing.isLoading || completed.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (ongoing.error.isNotEmpty || completed.error != null) {
+      return Center(
+        child: Text(
+          ongoing.error.isNotEmpty ? ongoing.error : completed.error!,
+        ),
+      );
+    }
+
+    return _selectedIndex == 1
+        ? _buildOrdersTab(ongoingOrders, completedOrders)
+        : Center(
+          child: Text(
+            _selectedIndex == 0 ? 'Dashboard Content' : 'Settings Content',
+          ),
+        );
+  }
+
+  Widget _buildOrdersTab(
+    List<OrderModel> ongoingOrders,
+    List<OrderModel> completedOrders,
+  ) {
+    return DefaultTabController(
+      length: 2,
+      child: Column(
+        children: [
+          const ProfileSection(
+            driverName: 'John Doe', // Replace with dynamic data
+            totalOrders: 15,
+            completedCount: 10,
+            ongoingCount: 2,
+          ),
+          const TabBar(
+            tabs: [
+              Tab(text: 'Ongoing', icon: Icon(Icons.pending_actions)),
+              Tab(text: 'Completed', icon: Icon(Icons.check_circle)),
+            ],
+          ),
+          Expanded(
+            child: TabBarView(
+              children: [
+                OrdersList(
+                  orders: ongoingOrders,
+                  onPickPressed: _onPickPressed,
+                ),
+                OrdersList(
+                  orders: completedOrders,
+                  onPickPressed: _onPickPressed,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

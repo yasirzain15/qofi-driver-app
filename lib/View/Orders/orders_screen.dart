@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qufi_driver_app/Controller/completed_orders_controller.dart';
 import 'package:qufi_driver_app/Controller/ongoing_orders_controller.dart';
-import 'package:qufi_driver_app/View/Dashboard/Widgets/orders_card.dart';
+import 'package:qufi_driver_app/Core/Constants/app_colors.dart';
+import 'package:qufi_driver_app/Widgets/orders_card.dart';
 
 class OrdersScreen extends StatelessWidget {
   const OrdersScreen({super.key});
@@ -15,7 +16,9 @@ class OrdersScreen extends StatelessWidget {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
+        backgroundColor: AppColors.background,
         appBar: AppBar(
+          backgroundColor: AppColors.background,
           title: const Text("Orders"),
           bottom: const TabBar(
             indicatorColor: Colors.blue,
