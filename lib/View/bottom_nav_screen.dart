@@ -1,43 +1,42 @@
 import 'package:flutter/material.dart';
-import 'package:qufi_driver_app/Core/Constants/app_colors.dart';
-import 'package:qufi_driver_app/View/orderlist/orderlist.dart';
+import 'package:qufi_driver_app/View/orders/orders_screen.dart';
 import 'package:qufi_driver_app/View/setting/settingview.dart';
-import 'package:qufi_driver_app/Widgets/Dasboard/dashboardhome.dart';
 
-class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key});
+class BottomNavScreen extends StatefulWidget {
+  const BottomNavScreen({super.key});
 
   @override
-  State<DashboardScreen> createState() => _DashboardScreenState();
+  State<BottomNavScreen> createState() => _BottomNavScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
+class _BottomNavScreenState extends State<BottomNavScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
-    const DashboardHomeContent(), // Self content
-    OrdersScreen(),
+    const BottomNavScreen(),
+    const OrdersScreen(),
     const SettingsScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       body: _screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: AppColors.background,
         currentIndex: _currentIndex,
-        onTap: (index) => setState(() => _currentIndex = index),
-        selectedItemColor: AppColors.text,
-        unselectedItemColor: AppColors.subText,
+        selectedItemColor: Colors.black,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.dashboard),
             label: 'Dashboard',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.access_time_filled),
+            icon: Icon(Icons.access_time),
             label: 'Orders',
           ),
           BottomNavigationBarItem(

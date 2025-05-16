@@ -7,8 +7,8 @@ import 'package:qufi_driver_app/Controller/location_controller.dart';
 import 'package:qufi_driver_app/Controller/logincontroller.dart';
 import 'package:qufi_driver_app/Core/Constants/app_colors.dart';
 import 'package:qufi_driver_app/Services/storage_service.dart';
+import 'package:qufi_driver_app/View/bottom_nav_screen.dart';
 
-import 'package:qufi_driver_app/View/dashboard/dashboardscreen.dart';
 import 'package:qufi_driver_app/Widgets/Login/custombutton.dart';
 import 'package:qufi_driver_app/Widgets/Login/inputfield.dart';
 
@@ -72,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => DashboardScreen()),
+        MaterialPageRoute(builder: (context) => BottomNavScreen()),
       );
     } else {
       if (!mounted) return; // Prevents accessing context if widget is disposed

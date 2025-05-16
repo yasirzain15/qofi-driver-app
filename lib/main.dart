@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qufi_driver_app/Controller/completed_orders_controller.dart';
-
 import 'package:qufi_driver_app/Controller/location_controller.dart';
 import 'package:qufi_driver_app/Controller/ongoing_orders_controller.dart';
 import 'package:qufi_driver_app/Services/storage_service.dart';
-import 'package:qufi_driver_app/View/dashboard/dashboardscreen.dart';
+import 'package:qufi_driver_app/View/bottom_nav_screen.dart';
 import 'package:qufi_driver_app/View/location_screen.dart';
 import 'package:qufi_driver_app/View/login/login_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  print("🔧 Initializing App...");
+
   // ✅ Check location permission
   bool locationEnabled = await LocationController().checkLocationPermission();
+  print("📍 Location permission: $locationEnabled");
+
   if (!locationEnabled) {
     runApp(const LocationRequiredScreen());
     return;
@@ -22,34 +25,47 @@ void main() async {
   // ✅ Load saved token
   final storageService = StorageService();
   final credentials = await storageService.getUserCredentials();
-  final bool isLoggedIn = credentials['token'] != null;
+  final String? token = credentials['token'];
+  print("🔑 Token: $token");
 
-  // ✅ Pass token using Provider
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => OngoingOrdersController()),
-        ChangeNotifierProvider(create: (_) => CompletedOrdersController()),
+  final bool isLoggedIn = token != null;
 
-        // Add more controllers here if needed
-      ],
-      child: MyApp(isLoggedIn: isLoggedIn),
-    ),
-  );
+  runApp(MyApp(isLoggedIn: isLoggedIn, token: token ?? ''));
 }
 
 class MyApp extends StatelessWidget {
   final bool isLoggedIn;
+  final String token;
 
-  const MyApp({super.key, required this.isLoggedIn});
+  const MyApp({super.key, required this.isLoggedIn, required this.token});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Qofi Driver',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: isLoggedIn ? const DashboardScreen() : const LoginScreen(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) {
+            final ongoingController = OngoingOrdersController();
+            Future.microtask(() => ongoingController.fetchOngoingOrders(token));
+            return ongoingController;
+          },
+        ),
+        ChangeNotifierProvider(
+          create: (_) {
+            final completedController = CompletedOrdersController();
+            Future.microtask(
+              () => completedController.fetchCompletedOrders(token),
+            );
+            return completedController;
+          },
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Qofi Driver',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(primarySwatch: Colors.blue),
+        home: isLoggedIn ? const BottomNavScreen() : const LoginScreen(),
+      ),
     );
   }
 }

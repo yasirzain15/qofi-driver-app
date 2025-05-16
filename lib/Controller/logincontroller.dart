@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:qufi_driver_app/Services/auth_services.dart';
 import 'package:qufi_driver_app/Controller/location_controller.dart';
-import 'package:qufi_driver_app/View/dashboard/dashboardscreen.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:qufi_driver_app/View/bottom_nav_screen.dart';
 
 class LoginController {
   final _authService = AuthService();
@@ -58,7 +58,7 @@ class LoginController {
       Future.delayed(const Duration(milliseconds: 300), () {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => DashboardScreen()),
+          MaterialPageRoute(builder: (context) => BottomNavScreen()),
         );
       });
 

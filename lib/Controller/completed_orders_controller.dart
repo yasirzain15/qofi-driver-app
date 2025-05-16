@@ -7,7 +7,7 @@ class CompletedOrdersController extends ChangeNotifier {
   bool isLoading = false;
   String? error;
 
-  Future<void> fetchCompletedOrders() async {
+  Future<void> fetchCompletedOrders(String token) async {
     isLoading = true;
     error = null;
     notifyListeners();
