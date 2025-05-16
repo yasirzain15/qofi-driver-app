@@ -52,8 +52,6 @@ class LoginController {
         await _authService.sendDriverLocation(locationData, token);
       }
 
-      _showSnackBar(context, "Login successful!");
-
       // ✅ Smooth transition to Dashboard
       Future.delayed(const Duration(milliseconds: 300), () {
         Navigator.pushReplacement(

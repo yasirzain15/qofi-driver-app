@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:qufi_driver_app/Controller/setting/settingcontroller.dart';
 import 'package:qufi_driver_app/Core/Constants/app_colors.dart';
 import 'package:qufi_driver_app/Model/setting/settingmodel.dart';
+import 'package:qufi_driver_app/Widgets/setting/edit_pasword.dart';
 
 import '../../Widgets/setting/profileimage.dart';
 
@@ -41,37 +42,6 @@ class SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  void _editLanguage() {
-    List<String> languages = ["English", "French", "Spanish", "German"];
-    showDialog(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children:
-                  languages
-                      .map(
-                        (lang) => ListTile(
-                          title: Text(lang, style: TextStyle(fontSize: 16)),
-                          trailing: Icon(Icons.arrow_forward_ios),
-                          onTap: () {
-                            setState(() => controller.updateLanguage(lang));
-                            Navigator.pop(context);
-                          },
-                        ),
-                      )
-                      .toList(),
-            ),
-          ),
-    );
-  }
-
-  void _pickImage() async {
-    await controller.updateImage();
-    setState(() {});
-  }
-
   @override
   Widget build(BuildContext context) {
     SettingsModel model = controller.model;
@@ -80,16 +50,22 @@ class SettingsScreenState extends State<SettingsScreen> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.background,
-        title: Text('Settings'),
 
-        leading: InkWell(onTap: () {}, child: Icon(Icons.arrow_back_ios)),
+        title: Padding(
+          padding: const EdgeInsets.only(top: 20),
+          child: Text('Settings'),
+        ),
       ),
       body: Column(
         children: [
+          SizedBox(height: 30),
+          ProfileImageView(),
+
           CircleAvatar(
             radius: 50,
             backgroundImage: AssetImage('assets/images/profile.png'),
           ),
+
           SizedBox(height: 10),
           Text(
             model.name,
@@ -97,8 +73,22 @@ class SettingsScreenState extends State<SettingsScreen> {
           ),
           SizedBox(height: 30),
           _buildSettingButton("Edit Name", _editName),
-          _buildSettingButton("Edit Photo", _pickImage),
-          _buildLanguageSelector("Language", model.language, _editLanguage),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => EditPasswordScreen()),
+              );
+            },
+            child: Card(
+              margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              color: Colors.white,
+              child: ListTile(
+                title: Text("Edit Password"),
+                trailing: Icon(Icons.arrow_forward_ios),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -111,32 +101,6 @@ class SettingsScreenState extends State<SettingsScreen> {
       child: ListTile(
         title: Text(label, style: TextStyle(fontSize: 16)),
         trailing: Icon(Icons.arrow_forward_ios),
-        onTap: onTap,
-      ),
-    );
-  }
-
-  Widget _buildLanguageSelector(
-    String label,
-    String value,
-    VoidCallback onTap,
-  ) {
-    return Card(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      color: Colors.white,
-      child: ListTile(
-        title: Text(
-          label,
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(value, style: TextStyle(fontSize: 16)),
-            SizedBox(width: 10),
-            Icon(Icons.arrow_forward_ios),
-          ],
-        ),
         onTap: onTap,
       ),
     );
