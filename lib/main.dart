@@ -1,55 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:qufi_driver_app/Controller/completed_orders_controller.dart';
+
 import 'package:qufi_driver_app/Controller/location_controller.dart';
+import 'package:qufi_driver_app/Controller/ongoing_orders_controller.dart';
 import 'package:qufi_driver_app/Services/storage_service.dart';
 import 'package:qufi_driver_app/View/dashboard/dashboardscreen.dart';
 import 'package:qufi_driver_app/View/location_screen.dart';
 import 'package:qufi_driver_app/View/login/login_screen.dart';
 
-// void main() async {
-//   WidgetsFlutterBinding.ensureInitialized(); // Ensures async execution before runApp
-
-//   final storageService = StorageService(); // Create instance
-//   final credentials =
-//       await storageService.getUserCredentials(); // Fetch saved credentials
-//   final bool isLoggedIn = credentials['token'] != null; // Check if token exists
-
-//   runApp(MyApp(isLoggedIn: isLoggedIn)); // Pass login state to MyApp
-// }
-
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Ensures async execution before runApp
+  WidgetsFlutterBinding.ensureInitialized();
 
-  // ✅ Check location permission before anything else
+  // ✅ Check location permission
   bool locationEnabled = await LocationController().checkLocationPermission();
-
   if (!locationEnabled) {
-    runApp(LocationRequiredScreen()); // ✅ Show location prompt first
+    runApp(const LocationRequiredScreen());
     return;
   }
 
-  final storageService = StorageService(); // Create instance
-  final credentials =
-      await storageService.getUserCredentials(); // Fetch saved credentials
-  final bool isLoggedIn = credentials['token'] != null; // Check if token exists
+  // ✅ Load saved token
+  final storageService = StorageService();
+  final credentials = await storageService.getUserCredentials();
+  final bool isLoggedIn = credentials['token'] != null;
 
-  runApp(MyApp(isLoggedIn: isLoggedIn)); // Pass login state to MyApp
+  // ✅ Pass token using Provider
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => OngoingOrdersController()),
+        ChangeNotifierProvider(create: (_) => CompletedOrdersController()),
+
+        // Add more controllers here if needed
+      ],
+      child: MyApp(isLoggedIn: isLoggedIn),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  final bool? isLoggedIn; // Stores login state
+  final bool isLoggedIn;
 
   const MyApp({super.key, required this.isLoggedIn});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
       title: 'Qofi Driver',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
-      home:
-          (isLoggedIn ?? false)
-              ? DashboardScreen()
-              : LoginScreen(), // Show appropriate screen
+      home: isLoggedIn ? const DashboardScreen() : const LoginScreen(),
     );
   }
 }

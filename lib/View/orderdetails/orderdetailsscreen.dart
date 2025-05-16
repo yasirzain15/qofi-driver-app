@@ -1,29 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:qufi_driver_app/Controller/orderdetails/orderdetail.dart';
+import 'package:provider/provider.dart';
+import 'package:qufi_driver_app/Controller/ongoing_orders_controller.dart';
 import 'package:qufi_driver_app/Core/Constants/app_colors.dart';
-
-import 'package:qufi_driver_app/Model/orderdeatils/orderdetailsmodel.dart';
+import 'package:qufi_driver_app/Model/ongoing_orders_model.dart';
 
 class OrderDetailsScreen extends StatefulWidget {
   const OrderDetailsScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _OrderDetailsScreenState createState() => _OrderDetailsScreenState();
 }
 
 class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
-  final OrderController controller = OrderController();
-
   @override
   void initState() {
     super.initState();
-    controller
-        .initializeOrders(); // Ensuring data is available before UI builds
+    final controller = Provider.of<OngoingOrdersController>(
+      context,
+      listen: false,
+    );
+    controller.fetchOngoingOrders("your_token_here"); // Replace with real token
   }
 
   @override
   Widget build(BuildContext context) {
+    final controller = Provider.of<OngoingOrdersController>(context);
+
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -32,32 +34,45 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           title: Text('Orders', style: TextStyle(fontWeight: FontWeight.bold)),
           backgroundColor: AppColors.background,
         ),
-        body: Column(
-          children: [
-            _buildTabBar(),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  _buildTabContent(0), // Completed Orders
-                  _buildTabContent(1), // Ongoing Orders
-                  _buildTabContent(2), //  Orders
-                ],
-              ),
-            ),
-          ],
-        ),
+        body:
+            controller.isLoading
+                ? Center(child: CircularProgressIndicator())
+                : controller.ongoingOrders == null
+                ? Center(
+                  child: Text("Failed to load orders\n${controller.error}"),
+                )
+                : Column(
+                  children: [
+                    _buildTabBar(controller),
+                    Expanded(
+                      child: TabBarView(
+                        children: [
+                          _buildTabContent(0, controller),
+                          _buildTabContent(1, controller),
+                          _buildTabContent(2, controller),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
       ),
     );
   }
 
-  Widget _buildTabBar() {
+  Widget _buildTabBar(OngoingOrdersController controller) {
     return TabBar(
       indicatorColor: Colors.blue,
       labelColor: Colors.black,
       tabs: [
-        _buildTab(controller.completedCount.toString(), "Orders"),
-        _buildTab(controller.ongoingCount.toString(), "Completed"),
-        _buildTab(controller.totalOrders.toString(), "Ongoing"),
+        _buildTab(
+          controller.ongoingOrders!.data.orderCount.toString(),
+          "Ongoing",
+        ),
+        _buildTab("0", "Completed"),
+        _buildTab(
+          controller.ongoingOrders!.data.driverOrders.length.toString(),
+          "All",
+        ),
       ],
     );
   }
@@ -79,19 +94,18 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     );
   }
 
-  Widget _buildTabContent(int tabIndex) {
-    List<OrderModel> orders;
+  Widget _buildTabContent(int tabIndex, OngoingOrdersController controller) {
+    List<DriverOrder> orders;
 
-    // Determine the correct data for each tab
     switch (tabIndex) {
       case 0:
-        orders = controller.getCompletedOrders();
+        orders = controller.ongoingOrders!.data.driverOrders;
         break;
       case 1:
-        orders = controller.getOngoingOrders();
+        orders = []; // Completed Orders logic (if available)
         break;
       case 2:
-        orders = controller.getOrders();
+        orders = controller.ongoingOrders!.data.driverOrders;
         break;
       default:
         orders = [];
@@ -103,11 +117,11 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            controller.tabNames[tabIndex], // Dynamically updates header
+            ["Ongoing Orders", "Completed Orders", "All Orders"][tabIndex],
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.blue,
+              color: Colors.blue[900],
             ),
           ),
           SizedBox(height: 12),
@@ -117,13 +131,13 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     );
   }
 
-  Widget _buildOrderList(List<OrderModel> orders) {
+  Widget _buildOrderList(List<DriverOrder> orders) {
     return Column(
       children: orders.map((order) => _buildOrderCard(order)).toList(),
     );
   }
 
-  Widget _buildOrderCard(OrderModel order) {
+  Widget _buildOrderCard(DriverOrder order) {
     return Card(
       color: AppColors.card,
       elevation: 4,
@@ -137,22 +151,22 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  order.orderId,
+                  order.orderNo,
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  order.status,
+                  "Ongoing", // You can use `order.status` if available
                   style: TextStyle(fontSize: 16, color: Colors.blue),
                 ),
               ],
             ),
             SizedBox(height: 6),
             Text(
-              order.customer,
+              order.customerName,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 6),
-            Text(order.address, style: TextStyle(fontSize: 16)),
+            Text(order.orderAddress, style: TextStyle(fontSize: 16)),
           ],
         ),
       ),

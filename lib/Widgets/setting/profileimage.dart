@@ -1,19 +1,34 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:qufi_driver_app/Model/setting/settingmodel.dart';
+import 'package:qufi_driver_app/Controller/image_controller.dart';
 
-class ProfileImage extends StatelessWidget {
-  const ProfileImage({super.key, required this.model});
+class ProfileImageView extends StatefulWidget {
+  const ProfileImageView({super.key});
 
-  final SettingsModel model;
+  @override
+  ProfileImageViewState createState() => ProfileImageViewState();
+}
+
+class ProfileImageViewState extends State<ProfileImageView> {
+  final ImageController _imageController = ImageController();
 
   @override
   Widget build(BuildContext context) {
-    return CircleAvatar(
-      radius: 100,
-      backgroundImage:
-          model.image != null
-              ? FileImage(model.image!)
-              : AssetImage("assets/profile.png") as ImageProvider,
+    File? imageFile = _imageController.getSelectedImage();
+
+    return GestureDetector(
+      onTap: () async {
+        await _imageController.pickImage();
+        setState(() {}); // Refresh UI after selecting image
+      },
+      child: CircleAvatar(
+        radius: 50,
+        backgroundImage: imageFile != null ? FileImage(imageFile) : null,
+        child:
+            imageFile == null
+                ? Icon(Icons.camera_alt, size: 40, color: Colors.grey)
+                : null,
+      ),
     );
   }
 }

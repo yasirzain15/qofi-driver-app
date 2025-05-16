@@ -4,4 +4,6 @@ class ApiConstants {
   // Endpoints
   static const String login = "$baseUrl/driver/login";
   static const String driverProfile = "$baseUrl/driver/profile";
+  static const String ongoingOrders = "$baseUrl/driver/getOrders/ongoing";
+  static const String completedOrders = "$baseUrl/driver/getOrders/completed";
 }

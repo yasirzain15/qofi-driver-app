@@ -114,8 +114,16 @@ class AuthService {
 
   Future<String?> getToken() async {
     final creds = await _storageService.getUserCredentials();
+
+    if (creds['token'] == null || creds['token']!.isEmpty) {
+      if (kDebugMode) {
+        print(" No token found!");
+      }
+      return null;
+    }
+
     if (kDebugMode) {
-      print("Retrieved Token: ${creds['token']}");
+      print(" Retrieved Token: ${creds['token']}");
     }
     return creds['token'];
   }
