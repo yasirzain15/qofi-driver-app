@@ -61,11 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       }
 
-      await StorageService().saveUserCredentials(
-        userInput,
-        password,
-        "dummyToken",
-      );
+      await StorageService().saveUserCredentials(userInput, password, "token");
       if (!mounted) {
         return; // Ensures the widget is still active before navigating
       }

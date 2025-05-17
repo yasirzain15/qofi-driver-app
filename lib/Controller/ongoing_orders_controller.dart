@@ -31,7 +31,7 @@ class OngoingOrdersController with ChangeNotifier {
         _ongoingOrders = OngoingOrders.fromJson(data);
         _error = '';
       } else {
-        _error = 'Failed: ${response.statusCode}';
+        _error = 'Failed:${response.statusCode}';
         _ongoingOrders = null;
       }
     } catch (e) {

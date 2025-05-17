@@ -2,16 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qufi_driver_app/Controller/completed_orders_controller.dart';
 import 'package:qufi_driver_app/Controller/ongoing_orders_controller.dart';
+import 'package:qufi_driver_app/Core/Constants/app_colors.dart';
 import 'package:qufi_driver_app/Model/order_model.dart';
-import 'package:qufi_driver_app/widgets/orders_list.dart';
-import 'package:qufi_driver_app/widgets/profile_section.dart';
+import 'package:qufi_driver_app/Services/storage_service.dart';
+import 'package:qufi_driver_app/View/login/login_screen.dart';
+import 'package:qufi_driver_app/Widgets/Dashboard/orders_list.dart';
+import 'package:qufi_driver_app/Widgets/Dashboard/profile_section.dart';
 
 class DriverDashboardScreen extends StatelessWidget {
   const DriverDashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: _DriverDashboardContent());
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: _DriverDashboardContent(),
+    );
   }
 }
 
@@ -32,15 +38,52 @@ class _DriverDashboardContentState extends State<_DriverDashboardContent> {
   }
 
   Future<void> _fetchOrders() async {
-    final ongoingController = context.read<OngoingOrdersController>();
-    final completedController = context.read<CompletedOrdersController>();
-    // Replace with actual token (preferably from AuthController)
-    const token = 'your_token_here';
+    try {
+      final ongoingController = context.read<OngoingOrdersController>();
+      final completedController = context.read<CompletedOrdersController>();
 
-    await Future.wait([
-      ongoingController.fetchOngoingOrders(token),
-      completedController.fetchCompletedOrders(token),
-    ]);
+      // Get token from storage
+      final credentials = await StorageService().getUserCredentials();
+      final token = credentials['token'];
+
+      // If no token exists, redirect to login immediately
+      if (token == null || token.isEmpty) {
+        if (mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginScreen()),
+          );
+        }
+        return;
+      }
+
+      // Fetch orders if token exists
+      await Future.wait([
+        ongoingController.fetchOngoingOrders(token),
+        completedController.fetchCompletedOrders(token),
+      ]);
+    } catch (e) {
+      debugPrint('Error fetching orders: $e');
+      if (mounted) {
+        // Show error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to load orders: ${e.toString()}')),
+        );
+
+        // If it's an auth error, redirect to login
+        if (e.toString().contains('401') ||
+            e.toString().contains('Unauthorized')) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) {
+                return const LoginScreen();
+              },
+            ),
+          );
+        }
+      }
+    }
   }
 
   void _onItemTapped(int index) => setState(() => _selectedIndex = index);
@@ -95,27 +138,13 @@ class _DriverDashboardContentState extends State<_DriverDashboardContent> {
     List<OrderModel> completedOrders,
   ) {
     return Scaffold(
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Driver Dashboard'),
-        backgroundColor: Colors.blue.shade800,
+        title: const Text('Dashboard'),
+        backgroundColor: AppColors.background,
         elevation: 0,
       ),
       body: _buildBody(ongoing, completed, ongoingOrders, completedOrders),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard),
-            label: 'Dashboard',
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: 'Orders'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
-      ),
     );
   }
 

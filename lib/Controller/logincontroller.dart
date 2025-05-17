@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:qufi_driver_app/Services/auth_services.dart';
 import 'package:qufi_driver_app/Controller/location_controller.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:qufi_driver_app/Services/storage_service.dart';
 import 'package:qufi_driver_app/View/bottom_nav_screen.dart';
 
 class LoginController {
@@ -24,7 +25,8 @@ class LoginController {
         return false;
       }
 
-      final token = response['token'];
+      final credentials = await StorageService().getUserCredentials();
+      final token = credentials['token'];
       if (token == null || token.isEmpty) {
         _showSnackBar(context, "Token missing from response.");
         return false;

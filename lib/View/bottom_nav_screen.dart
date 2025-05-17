@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qufi_driver_app/Core/Constants/app_colors.dart';
 import 'package:qufi_driver_app/View/Dashboard/dashboard_screen.dart';
 import 'package:qufi_driver_app/View/orders/orders_screen.dart';
 import 'package:qufi_driver_app/View/setting/settingview.dart';
@@ -22,8 +23,10 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.background,
       body: _screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: AppColors.background,
         currentIndex: _currentIndex,
         selectedItemColor: Colors.black,
         onTap: (index) {

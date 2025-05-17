@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:qufi_driver_app/Controller/completed_orders_controller.dart';
 import 'package:qufi_driver_app/Controller/ongoing_orders_controller.dart';
 import 'package:qufi_driver_app/Core/Constants/app_colors.dart';
-import 'package:qufi_driver_app/Widgets/orders_card.dart';
+import 'package:qufi_driver_app/Widgets/Dashboard/orders_card.dart';
 
 class OrdersScreen extends StatelessWidget {
   const OrdersScreen({super.key});
