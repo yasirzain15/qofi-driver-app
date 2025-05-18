@@ -19,11 +19,17 @@ class OngoingOrderTile extends StatelessWidget {
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [Text(order.customerName), Text(order.orderAddress)],
+          children: [
+            Text(
+              order.customerName,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(order.orderAddress),
+          ],
         ),
         trailing: const Chip(
           label: Text("Picked"),
-          backgroundColor: Colors.grey,
+          backgroundColor: Colors.green,
         ),
       ),
     );

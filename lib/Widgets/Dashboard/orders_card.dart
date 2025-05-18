@@ -18,6 +18,7 @@ class OrderCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 3,
+      color: Colors.white,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
@@ -33,8 +34,11 @@ class OrderCard extends StatelessWidget {
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
-                  Text(name),
-                  Text(address),
+                  Text(
+                    name,
+                    style: const TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                  Text(address, maxLines: 2, overflow: TextOverflow.ellipsis),
                 ],
               ),
             ),

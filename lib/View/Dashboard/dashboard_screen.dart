@@ -189,24 +189,72 @@ class _DriverDashboardContentState extends State<_DriverDashboardContent> {
             completedCount: 10,
             ongoingCount: 2,
           ),
-          const TabBar(
-            tabs: [
-              Tab(text: 'Ongoing', icon: Icon(Icons.pending_actions)),
-              Tab(text: 'Completed', icon: Icon(Icons.check_circle)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            spacing: 20,
+            children: [
+              Column(
+                children: [
+                  Text(
+                    (ongoingOrders.length + completedOrders.length).toString(),
+                    style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+                  ),
+                  Text("Orders", style: TextStyle(color: Colors.grey)),
+                ],
+              ),
+              Column(
+                children: [
+                  Text(
+                    completedOrders.length.toString(),
+                    style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+                  ),
+                  Text("Completed", style: TextStyle(color: Colors.grey)),
+                ],
+              ),
+              Column(
+                children: [
+                  Text(
+                    ongoingOrders.length.toString(),
+                    style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+                  ),
+                  Text("Ongoing", style: TextStyle(color: Colors.grey)),
+                ],
+              ),
             ],
           ),
+          // const TabBar(
+          //   labelColor: Colors.black,
+          //   indicatorColor: Colors.black,
+          //   tabs: [
+          //     Tab(
+          //       text: 'Ongoing',
+          //     ),
+          //     Tab(
+          //       text: 'Completed',
+          //     ),
+          //   ],
+          // ),
+          Row(
+            children: [
+              Container(
+                margin: EdgeInsets.only(left: 15, top: 10, bottom: 10),
+                child: Text(
+                  "Ongoing",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 21,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
           Expanded(
-            child: TabBarView(
-              children: [
-                OrdersList(
-                  orders: ongoingOrders,
-                  onPickPressed: _onPickPressed,
-                ),
-                OrdersList(
-                  orders: completedOrders,
-                  onPickPressed: _onPickPressed,
-                ),
-              ],
+            child: OrdersList(
+              orders: ongoingOrders,
+              onPickPressed: _onPickPressed,
             ),
           ),
         ],
