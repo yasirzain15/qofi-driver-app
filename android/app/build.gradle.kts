@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.qufi_driver_app"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 35
     ndkVersion = "29.0.13113456"
 
     

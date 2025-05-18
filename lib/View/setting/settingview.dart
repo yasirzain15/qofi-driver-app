@@ -60,8 +60,8 @@ class SettingsScreenState extends State<SettingsScreen> {
       body: Column(
         children: [
           SizedBox(height: 30),
-          ImageCaptureScreen(),
 
+          ImageCaptureScreen(),
           SizedBox(height: 10),
           Text(
             model.name,
