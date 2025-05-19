@@ -1,3 +1,5 @@
+// import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 class StorageService {
@@ -7,20 +9,16 @@ class StorageService {
     String token,
   ) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(
-      'userIdentifier',
-      userIdentifier,
-    ); // ✅ Stores username or phone number
+    await prefs.setString('userIdentifier', userIdentifier);
     await prefs.setString('password', password);
     await prefs.setString('auth_token', token);
+    print("✅ Credentials stored successfully.");
   }
 
   Future<Map<String, String?>> getUserCredentials() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return {
-      'userIdentifier': prefs.getString(
-        'userIdentifier',
-      ), // 🔄 Retrieves either username or phone number
+      'userIdentifier': prefs.getString('userIdentifier'),
       'password': prefs.getString('password'),
       'token': prefs.getString('auth_token'),
     };
@@ -28,8 +26,9 @@ class StorageService {
 
   Future<void> clearUserCredentials() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove('userIdentifier'); // 🧹 Clears username or phone number
+    await prefs.remove('userIdentifier');
     await prefs.remove('password');
     await prefs.remove('auth_token');
+    print("🧹 Credentials cleared successfully.");
   }
 }

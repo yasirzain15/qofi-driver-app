@@ -5,8 +5,6 @@ import 'package:qufi_driver_app/Model/setting/settingmodel.dart';
 import 'package:qufi_driver_app/View/setting/image.dart';
 import 'package:qufi_driver_app/Widgets/setting/edit_pasword.dart';
 
-import '../../Widgets/setting/profileimage.dart';
-
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 

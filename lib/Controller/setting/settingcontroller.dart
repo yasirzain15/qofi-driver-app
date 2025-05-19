@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:qufi_driver_app/Model/setting/settingmodel.dart';
 
 class SettingsController {
-  final SettingsModel model = SettingsModel();
+  final SettingsModel model = SettingsModel(currentPassword: '');
   final ImagePicker _picker = ImagePicker();
 
   void updateName(String newName) {
