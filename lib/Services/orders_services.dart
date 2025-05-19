@@ -20,6 +20,6 @@ class OrderService {
     } else {
       throw Exception('Failed to fetch completed orders');
     }
-    print("Response Body: ${response.body}");
+    // print("Response Body: ${response.body}");
   }
 }
