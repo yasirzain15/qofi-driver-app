@@ -89,15 +89,14 @@ class _DriverDashboardContentState extends State<_DriverDashboardContent> {
   void _onItemTapped(int index) => setState(() => _selectedIndex = index);
 
   void _onPickPressed(String orderId) => setState(() {
-    _pickedStates[orderId] = !(_pickedStates[orderId] ?? false);
-  });
+        _pickedStates[orderId] = !(_pickedStates[orderId] ?? false);
+      });
 
   @override
   Widget build(BuildContext context) {
     return Consumer2<OngoingOrdersController, CompletedOrdersController>(
       builder: (context, ongoing, completed, _) {
-        final ongoingOrders =
-            ongoing.ongoingOrders?.data.driverOrders
+        final ongoingOrders = ongoing.ongoingOrders?.data.driverOrders
                 .map(
                   (order) => OrderModel.fromDriverOrder(
                     order,
@@ -108,16 +107,15 @@ class _DriverDashboardContentState extends State<_DriverDashboardContent> {
                 .toList() ??
             [];
 
-        final completedOrders =
-            completed.completedOrders
-                .map(
-                  (order) => OrderModel.fromCompletedOrder(
-                    order,
-                    'Completed',
-                    picked: _pickedStates[order.orderNo] ?? false,
-                  ),
-                )
-                .toList();
+        final completedOrders = completed.completedOrders
+            .map(
+              (order) => OrderModel.fromCompletedOrder(
+                order,
+                'Completed',
+                picked: _pickedStates[order.orderNo] ?? false,
+              ),
+            )
+            .toList();
 
         return _buildScaffold(
           context,
@@ -169,10 +167,10 @@ class _DriverDashboardContentState extends State<_DriverDashboardContent> {
     return _selectedIndex == 1
         ? _buildOrdersTab(ongoingOrders, completedOrders)
         : Center(
-          child: Text(
-            _selectedIndex == 0 ? 'Dashboard Content' : 'Settings Content',
-          ),
-        );
+            child: Text(
+              _selectedIndex == 0 ? 'Dashboard Content' : 'Settings Content',
+            ),
+          );
   }
 
   Widget _buildOrdersTab(
@@ -189,24 +187,80 @@ class _DriverDashboardContentState extends State<_DriverDashboardContent> {
             completedCount: 10,
             ongoingCount: 2,
           ),
-          const TabBar(
-            tabs: [
-              Tab(text: 'Ongoing', icon: Icon(Icons.pending_actions)),
-              Tab(text: 'Completed', icon: Icon(Icons.check_circle)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            spacing: 20,
+            children: [
+              Column(
+                children: [
+                  Text(
+                    (ongoingOrders.length + completedOrders.length).toString(),
+                    style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "Orders",
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ],
+              ),
+              Column(
+                children: [
+                  Text(
+                    completedOrders.length.toString(),
+                    style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "Completed",
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ],
+              ),
+              Column(
+                children: [
+                  Text(
+                    ongoingOrders.length.toString(),
+                    style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "Ongoing",
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ],
+              ),
             ],
           ),
+          // const TabBar(
+          //   labelColor: Colors.black,
+          //   indicatorColor: Colors.black,
+          //   tabs: [
+          //     Tab(
+          //       text: 'Ongoing',
+          //     ),
+          //     Tab(
+          //       text: 'Completed',
+          //     ),
+          //   ],
+          // ),
+          Row(
+            children: [
+              Container(
+                margin: EdgeInsets.only(left: 15, top: 10, bottom: 10),
+                child: Text(
+                  "Ongoing",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 21,
+                      fontWeight: FontWeight.w700),
+                ),
+              ),
+            ],
+          ),
+
           Expanded(
-            child: TabBarView(
-              children: [
-                OrdersList(
-                  orders: ongoingOrders,
-                  onPickPressed: _onPickPressed,
-                ),
-                OrdersList(
-                  orders: completedOrders,
-                  onPickPressed: _onPickPressed,
-                ),
-              ],
+            child: OrdersList(
+              orders: ongoingOrders,
+              onPickPressed: _onPickPressed,
             ),
           ),
         ],

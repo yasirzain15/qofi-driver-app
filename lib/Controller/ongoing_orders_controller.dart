@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:qufi_driver_app/Core/Constants/api.dart';
@@ -18,17 +19,21 @@ class OngoingOrdersController with ChangeNotifier {
     notifyListeners();
 
     try {
+      log("API Token : ${token}");
       final response = await http.get(
         Uri.parse(ApiConstants.ongoingOrders),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
+          'Authorization':
+              'Bearer 313|yaMg3fmxrPFzwigBQbcHaSFORAVj351Ehc2QXQia4e2ef0bf',
         },
       );
+      log("Response: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         _ongoingOrders = OngoingOrders.fromJson(data);
+        log(_ongoingOrders.toString());
         _error = '';
       } else {
         _error = 'Failed:${response.statusCode}';

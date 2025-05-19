@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qufi_driver_app/Widgets/setting/profileimage.dart';
 
 class ProfileSection extends StatelessWidget {
   final String driverName;
@@ -15,20 +16,21 @@ class ProfileSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Colors.white,
+      elevation: 0,
       margin: const EdgeInsets.all(12),
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Row(
+        child: Column(
           children: [
-            const CircleAvatar(radius: 30, child: Icon(Icons.person)),
-            const SizedBox(width: 16),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(driverName, style: Theme.of(context).textTheme.titleLarge),
-                Text('Total Orders: $totalOrders'),
-                Text('Completed: $completedCount | Ongoing: $ongoingCount'),
-              ],
+            CircleAvatar(
+              radius: 50,
+              backgroundImage: AssetImage('assets/images/profile.png'),
+            ),
+            SizedBox(height: 10),
+            Text(
+              "John Doe",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ],
         ),
