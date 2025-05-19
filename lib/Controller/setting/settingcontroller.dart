@@ -11,10 +11,6 @@ class SettingsController {
     model.name = newName;
   }
 
-  void updateLanguage(String newLanguage) {
-    model.language = newLanguage;
-  }
-
   Future<void> updateImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {

@@ -57,7 +57,6 @@ class SettingsScreenState extends State<SettingsScreen> {
       body: Column(
         children: [
           SizedBox(height: 30),
-          ProfileImageView(),
 
           CircleAvatar(
             radius: 50,
