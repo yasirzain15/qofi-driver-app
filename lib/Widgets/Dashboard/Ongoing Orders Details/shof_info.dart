@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qufi_driver_app/Core/Constants/app_colors.dart';
 import 'package:qufi_driver_app/Model/order_details_model.dart';
 
 class ShopInfo extends StatelessWidget {
@@ -9,6 +10,7 @@ class ShopInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: AppColors.background,
       elevation: 3,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
