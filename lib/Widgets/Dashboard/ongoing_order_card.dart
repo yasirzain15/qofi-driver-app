@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qufi_driver_app/Controller/ongoing_orders_controller.dart';
 import 'package:qufi_driver_app/Model/order_model.dart';
-import 'package:qufi_driver_app/View/Dashboard/order_details_screen.dart';
+import 'package:qufi_driver_app/View/Dashboard/order_details_view.dart';
 
 class OrdersList extends StatelessWidget {
   final List<OrderModel> orders;
@@ -25,7 +25,7 @@ class OrdersList extends StatelessWidget {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => OrderDetailsScreen()),
+              MaterialPageRoute(builder: (context) => OrderDetailsView()),
             );
           },
           child: Card(
