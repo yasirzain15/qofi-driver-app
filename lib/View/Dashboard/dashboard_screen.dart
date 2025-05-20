@@ -6,8 +6,8 @@ import 'package:qufi_driver_app/Core/Constants/app_colors.dart';
 import 'package:qufi_driver_app/Model/order_model.dart';
 import 'package:qufi_driver_app/Services/storage_service.dart';
 import 'package:qufi_driver_app/View/login/login_screen.dart';
-import 'package:qufi_driver_app/Widgets/Dashboard/orders_list.dart';
-import 'package:qufi_driver_app/Widgets/Dashboard/profile_section.dart';
+import 'package:qufi_driver_app/Widgets/Dashboard/ongoing_order_card.dart';
+import 'package:qufi_driver_app/Widgets/Dashboard/orders_status.dart';
 
 class DriverDashboardScreen extends StatelessWidget {
   const DriverDashboardScreen({super.key});
@@ -89,14 +89,15 @@ class _DriverDashboardContentState extends State<_DriverDashboardContent> {
   void _onItemTapped(int index) => setState(() => _selectedIndex = index);
 
   void _onPickPressed(String orderId) => setState(() {
-        _pickedStates[orderId] = !(_pickedStates[orderId] ?? false);
-      });
+    _pickedStates[orderId] = !(_pickedStates[orderId] ?? false);
+  });
 
   @override
   Widget build(BuildContext context) {
     return Consumer2<OngoingOrdersController, CompletedOrdersController>(
       builder: (context, ongoing, completed, _) {
-        final ongoingOrders = ongoing.ongoingOrders?.data.driverOrders
+        final ongoingOrders =
+            ongoing.ongoingOrders?.data.driverOrders
                 .map(
                   (order) => OrderModel.fromDriverOrder(
                     order,
@@ -107,15 +108,16 @@ class _DriverDashboardContentState extends State<_DriverDashboardContent> {
                 .toList() ??
             [];
 
-        final completedOrders = completed.completedOrders
-            .map(
-              (order) => OrderModel.fromCompletedOrder(
-                order,
-                'Completed',
-                picked: _pickedStates[order.orderNo] ?? false,
-              ),
-            )
-            .toList();
+        final completedOrders =
+            completed.completedOrders
+                .map(
+                  (order) => OrderModel.fromCompletedOrder(
+                    order,
+                    'Completed',
+                    picked: _pickedStates[order.orderNo] ?? false,
+                  ),
+                )
+                .toList();
 
         return _buildScaffold(
           context,
@@ -167,10 +169,10 @@ class _DriverDashboardContentState extends State<_DriverDashboardContent> {
     return _selectedIndex == 1
         ? _buildOrdersTab(ongoingOrders, completedOrders)
         : Center(
-            child: Text(
-              _selectedIndex == 0 ? 'Dashboard Content' : 'Settings Content',
-            ),
-          );
+          child: Text(
+            _selectedIndex == 0 ? 'Dashboard Content' : 'Settings Content',
+          ),
+        );
   }
 
   Widget _buildOrdersTab(
@@ -197,10 +199,7 @@ class _DriverDashboardContentState extends State<_DriverDashboardContent> {
                     (ongoingOrders.length + completedOrders.length).toString(),
                     style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
                   ),
-                  Text(
-                    "Orders",
-                    style: TextStyle(color: Colors.grey),
-                  ),
+                  Text("Orders", style: TextStyle(color: Colors.grey)),
                 ],
               ),
               Column(
@@ -209,10 +208,7 @@ class _DriverDashboardContentState extends State<_DriverDashboardContent> {
                     completedOrders.length.toString(),
                     style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
                   ),
-                  Text(
-                    "Completed",
-                    style: TextStyle(color: Colors.grey),
-                  ),
+                  Text("Completed", style: TextStyle(color: Colors.grey)),
                 ],
               ),
               Column(
@@ -221,10 +217,7 @@ class _DriverDashboardContentState extends State<_DriverDashboardContent> {
                     ongoingOrders.length.toString(),
                     style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
                   ),
-                  Text(
-                    "Ongoing",
-                    style: TextStyle(color: Colors.grey),
-                  ),
+                  Text("Ongoing", style: TextStyle(color: Colors.grey)),
                 ],
               ),
             ],
@@ -249,9 +242,10 @@ class _DriverDashboardContentState extends State<_DriverDashboardContent> {
                   "Ongoing",
                   textAlign: TextAlign.left,
                   style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 21,
-                      fontWeight: FontWeight.w700),
+                    color: Colors.black,
+                    fontSize: 21,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ],

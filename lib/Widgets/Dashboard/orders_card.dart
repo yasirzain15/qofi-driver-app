@@ -35,11 +35,7 @@ class OrderCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(name),
-                  Text(
-                    address,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  )
+                  Text(address, maxLines: 2, overflow: TextOverflow.ellipsis),
                 ],
               ),
             ),
