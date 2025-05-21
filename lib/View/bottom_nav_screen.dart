@@ -17,7 +17,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
   final List<Widget> _screens = [
     const DriverDashboardScreen(),
     const OrdersScreen(),
-    const SettingsScreen(),
+    SettingsScreen(),
   ];
 
   @override

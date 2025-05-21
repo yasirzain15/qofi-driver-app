@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qufi_driver_app/Controller/completed_orders_controller.dart';
@@ -11,22 +12,21 @@ import 'package:qufi_driver_app/View/login/login_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  print("🔧 Initializing App...");
-
-  // ✅ Check location permission
+  //  Check location permission
   bool locationEnabled = await LocationController().checkLocationPermission();
-  print("📍 Location permission: $locationEnabled");
 
   if (!locationEnabled) {
     runApp(const LocationRequiredScreen());
     return;
   }
 
-  // ✅ Load saved token
+  //  Load saved token
   final storageService = StorageService();
   final credentials = await storageService.getUserCredentials();
   final String? token = credentials['token'];
-  print("🔑 Token: $token");
+  if (kDebugMode) {
+    print(" Token: $token");
+  }
 
   final bool isLoggedIn = token != null;
 

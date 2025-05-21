@@ -1,5 +1,6 @@
 // import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class StorageService {
@@ -12,7 +13,9 @@ class StorageService {
     await prefs.setString('userIdentifier', userIdentifier);
     await prefs.setString('password', password);
     await prefs.setString('auth_token', token);
-    print("✅ Credentials stored successfully.");
+    if (kDebugMode) {
+      print(" Credentials stored successfully.");
+    }
   }
 
   Future<Map<String, String?>> getUserCredentials() async {
@@ -29,6 +32,8 @@ class StorageService {
     await prefs.remove('userIdentifier');
     await prefs.remove('password');
     await prefs.remove('auth_token');
-    print("🧹 Credentials cleared successfully.");
+    if (kDebugMode) {
+      print(" Credentials cleared successfully.");
+    }
   }
 }

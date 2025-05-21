@@ -1,17 +1,9 @@
-import 'dart:io';
+class ImageModel {
+  final String imageUrl;
 
-class SettingsModel {
-  String name;
-  String currentPassword;
+  ImageModel({required this.imageUrl});
 
-  File? image;
-
-  SettingsModel({
-    this.name = "John Doe",
-    this.image,
-    required this.currentPassword,
-  });
-  factory SettingsModel.fromJson(Map<String, dynamic> json) {
-    return SettingsModel(currentPassword: json['password']);
+  Map<String, dynamic> toJson() {
+    return {'imageUrl': imageUrl};
   }
 }

@@ -1,16 +1,14 @@
-import 'dart:convert';
-
+import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:flutter/material.dart';
-import 'dart:io';
-
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart'
-    show SharedPreferences;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ImageCaptureScreen extends StatefulWidget {
-  const ImageCaptureScreen({super.key});
+  final String? savedImagePath; // Receive saved image path from SettingsScreen
+
+  const ImageCaptureScreen({super.key, this.savedImagePath});
 
   @override
   ImageCaptureScreenState createState() => ImageCaptureScreenState();
@@ -18,8 +16,32 @@ class ImageCaptureScreen extends StatefulWidget {
 
 class ImageCaptureScreenState extends State<ImageCaptureScreen> {
   File? _image;
+  String? _savedImagePath;
   final ImagePicker _picker = ImagePicker();
 
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedImage();
+  }
+
+  /// ✅ Load saved image path from SharedPreferences
+  Future<void> _loadSavedImage() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? imagePath = prefs.getString("saved_image_path");
+
+    if (imagePath != null && File(imagePath).existsSync()) {
+      setState(() {
+        _savedImagePath = imagePath;
+      });
+    } else {
+      if (kDebugMode) {
+        print("⚠ No saved image found.");
+      }
+    }
+  }
+
+  /// ✅ Capture, Save Image Locally, and Store Path
   Future<void> _captureImage() async {
     try {
       final XFile? pickedFile = await _picker.pickImage(
@@ -27,7 +49,7 @@ class ImageCaptureScreenState extends State<ImageCaptureScreen> {
       );
 
       if (pickedFile == null) {
-        print("No image captured.");
+        if (kDebugMode) print("⚠ No image captured.");
         return;
       }
 
@@ -35,47 +57,25 @@ class ImageCaptureScreenState extends State<ImageCaptureScreen> {
 
       setState(() {
         _image = imageFile;
+        _savedImagePath = pickedFile.path;
       });
 
-      // ✅ Save to Gallery using image_gallery_saver_plus with proper error handling
+      // ✅ Save image path to SharedPreferences
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString("saved_image_path", pickedFile.path);
+      if (kDebugMode) {
+        print("✅ Image Path Saved: ${prefs.getString("saved_image_path")}");
+      }
+
+      // ✅ Save to gallery
       final result = await ImageGallerySaverPlus.saveFile(pickedFile.path);
       if (result == null || result['isSuccess'] == false) {
-        print("Failed to save image to gallery.");
+        if (kDebugMode) print("❌ Failed to save image to gallery.");
       } else {
-        print("Image saved successfully!");
-      }
-
-      // ✅ Upload Image with null safety
-      await _uploadImage(imageFile);
-    } catch (e) {
-      print("Error capturing image: $e");
-    }
-  }
-
-  Future<void> _uploadImage(File imageFile) async {
-    try {
-      var request = http.MultipartRequest(
-        'POST',
-        Uri.parse(
-          "https://staging.riseupkw.net/qofi/api/v1/driver/update/image",
-        ),
-      );
-      request.files.add(
-        await http.MultipartFile.fromPath('image', imageFile.path),
-      );
-
-      var response = await request.send();
-      if (response.statusCode == 200) {
-        final responseData = await response.stream.bytesToString();
-        final imageUrl = jsonDecode(responseData)['imageUrl'];
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString("saved_image_url", imageUrl);
-        print('Upload successful');
-      } else {
-        print('Upload failed');
+        if (kDebugMode) print("✅ Image saved to gallery successfully!");
       }
     } catch (e) {
-      print("Error uploading image: $e");
+      if (kDebugMode) print("❌ Error capturing image: $e");
     }
   }
 
@@ -85,18 +85,24 @@ class ImageCaptureScreenState extends State<ImageCaptureScreen> {
       children: [
         CircleAvatar(
           radius: 40,
-          backgroundColor: Colors.blueAccent, // Fallback color
+          backgroundColor: Colors.blueAccent,
           backgroundImage:
               _image != null
                   ? FileImage(_image!)
-                  : null, // ✅ Show image inside avatar
+                  : _savedImagePath != null &&
+                      File(_savedImagePath!).existsSync()
+                  ? FileImage(File(_savedImagePath!))
+                  : const AssetImage(
+                    "assets/default_profile.png",
+                  ), // ✅ Fallback Image
           child:
-              _image == null
+              _image == null &&
+                      (_savedImagePath == null || _savedImagePath!.isEmpty)
                   ? IconButton(
-                    icon: Icon(Icons.camera_alt, color: Colors.white),
+                    icon: const Icon(Icons.camera_alt, color: Colors.white),
                     onPressed: _captureImage,
                   )
-                  : null, // ✅ Remove button when image is present
+                  : null, // ✅ Hide button when an image exists
         ),
       ],
     );

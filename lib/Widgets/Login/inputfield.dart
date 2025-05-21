@@ -19,7 +19,7 @@ class InputField extends StatelessWidget {
     return Card(
       elevation: 1,
       color: Colors.white,
-      child: TextFormField(
+      child: TextField(
         controller: controller,
         obscureText: isPassword,
         decoration: InputDecoration(
@@ -38,12 +38,12 @@ class InputField extends StatelessWidget {
           ),
         ),
 
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return '$label cannot be empty';
-          }
-          return null;
-        },
+        // validator: (value) {
+        //   if (value == null || value.isEmpty) {
+        //     return '$label cannot be empty';
+        //   }
+        //   return null;
+        // },
       ),
     );
   }

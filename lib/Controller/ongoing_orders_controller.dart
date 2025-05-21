@@ -19,7 +19,7 @@ class OngoingOrdersController with ChangeNotifier {
     notifyListeners();
 
     try {
-      log("API Token : ${token}");
+      log("API Token : $token");
       final response = await http.get(
         Uri.parse(ApiConstants.ongoingOrders),
         headers: {

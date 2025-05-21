@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 
@@ -11,9 +12,8 @@ class ImageService {
         Uri.parse('https://your-server.com/api/upload'),
       );
 
-      // Add headers (authentication, content type)
       request.headers.addAll({
-        "Authorization": "Bearer YOUR_TOKEN_HERE", // Replace with actual token
+        "Authorization": "",
         "Content-Type": "multipart/form-data",
       });
 
@@ -28,13 +28,19 @@ class ImageService {
         var responseBody = await response.stream.bytesToString();
         var jsonResponse = jsonDecode(responseBody);
         String imageUrl = jsonResponse['image_url']; // Extract image URL
-        print("Uploaded Image URL: $imageUrl");
+        if (kDebugMode) {
+          print("Uploaded Image URL: $imageUrl");
+        }
         return imageUrl;
       } else {
-        print("Upload failed: ${response.statusCode}");
+        if (kDebugMode) {
+          print("Upload failed: ${response.statusCode}");
+        }
       }
     } catch (e) {
-      print("Upload Error: $e");
+      if (kDebugMode) {
+        print("Upload Error: $e");
+      }
     }
     return null;
   }

@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:qufi_driver_app/Core/Constants/api.dart';
-import 'package:qufi_driver_app/Model/drivermodel.dart';
+import 'package:qufi_driver_app/Model/setting/drivermodel.dart';
 import 'package:qufi_driver_app/Services/storage_service.dart';
 
 class UserService {

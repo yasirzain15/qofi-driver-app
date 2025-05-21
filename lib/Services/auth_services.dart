@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:qufi_driver_app/Core/Constants/api.dart';
-import 'package:qufi_driver_app/Model/drivermodel.dart';
+import 'package:qufi_driver_app/Model/setting/drivermodel.dart';
 import 'package:qufi_driver_app/Services/storage_service.dart';
 
 class AuthService {
@@ -85,17 +85,17 @@ class AuthService {
       final response = await http.post(
         Uri.parse(
           "https://staging.riseupkw.net/qofi/api/v1/location/update",
-        ), // ✅ Verify correct API endpoint
+        ), //  Verify correct API endpoint
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer $token", // ✅ Include authentication token
+          "Authorization": "Bearer $token", //  Include authentication token
         },
-        body: jsonEncode(locationData), // ✅ Ensure JSON format
+        body: jsonEncode(locationData), //  Ensure JSON format
       );
 
       if (response.statusCode == 200) {
         if (kDebugMode) {
-          print("✅ Location updated successfully: ${response.body}");
+          print(" Location updated successfully: ${response.body}");
         }
         return true;
       } else {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:qufi_driver_app/Model/ongoing_orders_model.dart';
 
 class OngoingOrderTile extends StatelessWidget {
@@ -20,10 +21,6 @@ class OngoingOrderTile extends StatelessWidget {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [Text(order.customerName), Text(order.orderAddress)],
-        ),
-        trailing: const Chip(
-          label: Text("Picked"),
-          backgroundColor: Colors.grey,
         ),
       ),
     );
