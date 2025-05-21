@@ -24,6 +24,9 @@ dependencies:
   http: ^0.13.6
   image_gallery_saver_plus: ^4.0.1
   url_launcher: ^6.3.1
+  flutter_contacts_service: ^0.0.3
+  
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
