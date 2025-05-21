@@ -7,8 +7,8 @@ import 'package:qufi_driver_app/Model/order_model.dart';
 
 import 'package:qufi_driver_app/Services/storage_service.dart';
 import 'package:qufi_driver_app/View/login/login_screen.dart';
-import 'package:qufi_driver_app/Widgets/Dashboard/orders_list.dart';
-import 'package:qufi_driver_app/Widgets/Dashboard/profile_section.dart';
+import 'package:qufi_driver_app/Widgets/Dashboard/ongoing_order_card.dart';
+import 'package:qufi_driver_app/Widgets/Dashboard/orders_status.dart';
 
 class DriverDashboardScreen extends StatelessWidget {
   const DriverDashboardScreen({super.key});
