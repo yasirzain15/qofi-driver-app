@@ -73,7 +73,7 @@ class NameViewState extends State<NameView> {
             InputField(controller: nameController, label: 'New Name'),
             SizedBox(height: 20),
             CustomButton(
-              text: isLoading ? '' : 'Save',
+              text: isLoading ? 'Saving' : 'Save',
               isLoading: isLoading,
               onPressed: isLoading ? null : updateName,
             ),

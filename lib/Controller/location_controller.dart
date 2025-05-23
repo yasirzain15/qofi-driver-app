@@ -87,7 +87,7 @@ class LocationController {
         "✅ Latitude: ${position.latitude}, Longitude: ${position.longitude}",
       );
     } else {
-      print("❌ Unable to fetch location.");
+      print(" Unable to fetch location.");
     }
   }
 

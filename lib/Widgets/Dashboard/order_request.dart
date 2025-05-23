@@ -103,6 +103,9 @@ class _OrderResponseScreenState extends State<OrderResponseScreen> {
         ElevatedButton(
           onPressed: () {
             sendOrderResponse(context, "reject");
+            Future.delayed(Duration(seconds: 2), () {
+              Navigator.pop(context);
+            });
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromARGB(255, 216, 215, 215),
