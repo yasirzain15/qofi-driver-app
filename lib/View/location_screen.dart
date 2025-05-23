@@ -16,6 +16,7 @@ class LocationRequiredScreen extends StatelessWidget {
               TextButton(
                 onPressed: () async {
                   await Geolocator.openLocationSettings();
+                  Navigator.pop(context);
                 },
                 child: Text("Go to Settings"),
               ),

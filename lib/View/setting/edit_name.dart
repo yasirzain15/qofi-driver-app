@@ -2,10 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:qufi_driver_app/Core/Constants/app_colors.dart';
-import 'package:qufi_driver_app/Model/setting/edit_name_model.dart';
+
 import 'package:qufi_driver_app/View/setting/settingview.dart';
 import 'package:qufi_driver_app/Widgets/Login/custombutton.dart';
 import 'package:qufi_driver_app/Widgets/Login/inputfield.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Controller/setting/edit_name_controller.dart';
 
@@ -20,45 +21,41 @@ class NameViewState extends State<NameView> {
   final TextEditingController nameController = TextEditingController();
   final NameController nameControllerInstance = NameController();
   bool isLoading = false;
+  void showError(String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
+  }
 
   void updateName() async {
-    setState(() => isLoading = true);
     if (nameController.text.trim().isEmpty) {
-      showError("Name cannot be empty!");
+      showError("Name cannot be empty!"); // ✅ Show error for empty name
       return;
     }
 
     setState(() => isLoading = true);
 
-    String token = '411|jHgzQ9z7qHbetzLWsUxXWngjZ4RWFWmr8RcVNfDBac453dad';
-    NameModel nameModel = NameModel(name: nameController.text.trim());
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(
+      "name",
+      nameController.text.trim(),
+    ); // ✅ Save name locally
 
-    String responseMessage = await nameControllerInstance.updateName(
-      nameModel,
-      token,
-    );
+    print("✅ Saved Name Locally: ${prefs.getString("name")}"); // ✅ Debugging
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(responseMessage)));
-
-    if (responseMessage.contains("Name updated successfully")) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => SettingsScreen()),
-      );
-    }
-
-    setState(() => isLoading = false);
-  }
-
-  void showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message, style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.red,
+        content: Text(
+          "✅ Name updated successfully!", // ✅ Use correct variable
+        ),
       ),
     );
+
+    setState(() => isLoading = false);
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => SettingsScreen()),
+    ).then((_) {});
   }
 
   @override
@@ -76,7 +73,8 @@ class NameViewState extends State<NameView> {
             InputField(controller: nameController, label: 'New Name'),
             SizedBox(height: 20),
             CustomButton(
-              text: isLoading ? 'Saving...' : 'Save',
+              text: isLoading ? '' : 'Save',
+              isLoading: isLoading,
               onPressed: isLoading ? null : updateName,
             ),
           ],

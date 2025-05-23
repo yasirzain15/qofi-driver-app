@@ -1,19 +1,21 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:qufi_driver_app/Core/Constants/api.dart';
 import 'package:qufi_driver_app/Model/setting/drivermodel.dart';
 import 'package:qufi_driver_app/Services/storage_service.dart';
+import 'package:qufi_driver_app/View/login/login_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   final _storageService = StorageService();
 
+  /// ✅ Login Function: Stores Token & User Info
   Future<Map<String, dynamic>> login(String userInput, String password) async {
     try {
-      // Determine if input is a phone number
       bool isPhoneNumber = RegExp(r'^\d+$').hasMatch(userInput);
 
-      // Construct API request body dynamically
       Map<String, String> requestData = {
         if (!isPhoneNumber) "username": userInput,
         if (isPhoneNumber) "phone": userInput,
@@ -27,14 +29,8 @@ class AuthService {
       );
 
       if (kDebugMode) {
-        if (kDebugMode) {
-          if (kDebugMode) {
-            print("Response Code: ${response.statusCode}");
-          }
-        }
-      }
-      if (kDebugMode) {
-        print("Response Body: ${response.body}");
+        print("🔹 Response Code: ${response.statusCode}");
+        print("🔹 Response Body: ${response.body}");
       }
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
@@ -48,7 +44,7 @@ class AuthService {
         }
 
         final driverData = data['data']['driver'];
-        final token = data['data']['token'];
+        final String? token = data['data']['token']; // ✅ Retrieve token
 
         if (token == null || token.isEmpty) {
           return {'success': false, 'message': 'Token missing or invalid.'};
@@ -56,11 +52,19 @@ class AuthService {
 
         final driver = Driver.fromJson(driverData);
 
-        // Save credentials dynamically
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString("auth_token", token);
+        await prefs.setString("name", driverData["name"] ?? "Driver");
+        await prefs.setString("username", driverData["username"]);
+        await prefs.setString("image", driverData["image"]);
+        String? storedImageUrl = prefs.getString("image");
+        print("🔹 Stored Image URL: $storedImageUrl");
+
+        print("✅ Stored Auth Token: $token");
+        print("✅ Stored Username: ${prefs.getString("username")}");
+        print("✅ Stored Image URL: ${prefs.getString("image")}");
+
         await _storageService.saveUserCredentials(userInput, password, token);
-        if (kDebugMode) {
-          print("Stored Token: $token");
-        }
 
         return {'success': true, 'token': token, 'driver': driver};
       } else {
@@ -70,68 +74,67 @@ class AuthService {
         };
       }
     } catch (e) {
-      if (kDebugMode) {
-        print("Login Error: $e");
-      }
+      print("❌ Login Error: $e");
       return {'success': false, 'message': 'Unexpected error occurred.'};
     }
   }
 
+  /// ✅ Retrieves Stored Token
+  Future<String?> getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString("auth_token");
+
+    print("🔹 Retrieved Token from Storage: $token"); // Debugging
+
+    return token;
+  }
+
+  /// ✅ Sends Driver Location to API
   Future<bool> sendDriverLocation(
     Map<String, dynamic> locationData,
     String token,
   ) async {
+    String? token = await getToken(); // ✅ Retrieve stored token
+
+    if (token == null || token.isEmpty) {
+      print("❌ Token missing! Cannot send location.");
+      return false;
+    }
+
     try {
       final response = await http.post(
-        Uri.parse(
-          "https://staging.riseupkw.net/qofi/api/v1/location/update",
-        ), //  Verify correct API endpoint
+        Uri.parse(ApiConstants.updatelocation),
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer $token", //  Include authentication token
+          "Authorization": "Bearer $token",
         },
-        body: jsonEncode(locationData), //  Ensure JSON format
+        body: jsonEncode(locationData),
       );
 
       if (response.statusCode == 200) {
-        if (kDebugMode) {
-          print(" Location updated successfully: ${response.body}");
-        }
+        print("✅ Location updated successfully: ${response.body}");
         return true;
       } else {
-        if (kDebugMode) {
-          print(" Failed to update location: ${response.body}");
-        }
+        print("❌ Failed to update location: ${response.body}");
         return false;
       }
     } catch (e) {
-      if (kDebugMode) {
-        print(" Error sending location: $e");
-      }
+      print("❌ Error sending location: $e");
       return false;
     }
   }
 
-  Future<String?> getToken() async {
-    final creds = await _storageService.getUserCredentials();
+  Future<void> logout(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear(); // ✅ Remove all stored user data
 
-    if (creds['token'] == null || creds['token']!.isEmpty) {
-      if (kDebugMode) {
-        print(" No token found!");
-      }
-      return null;
-    }
+    print("✅ User logged out successfully.");
 
-    if (kDebugMode) {
-      print(" Retrieved Token: ${creds['token']}");
-    }
-    return creds['token'];
-  }
-
-  Future<void> logout() async {
-    await _storageService.clearUserCredentials();
-    if (kDebugMode) {
-      print("User logged out successfully.");
-    }
+    // Redirect to login screen
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+      (route) => false, // ✅ Clears navigation history
+    );
   }
 }

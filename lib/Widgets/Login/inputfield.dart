@@ -5,6 +5,7 @@ class InputField extends StatelessWidget {
   final String label;
   final bool isPassword;
   final TextInputType keyboardType;
+  final String? Function(String?)? validator;
 
   const InputField({
     super.key,
@@ -12,6 +13,7 @@ class InputField extends StatelessWidget {
     required this.label,
     this.isPassword = false,
     this.keyboardType = TextInputType.text,
+    this.validator,
   });
 
   @override
@@ -19,9 +21,10 @@ class InputField extends StatelessWidget {
     return Card(
       elevation: 1,
       color: Colors.white,
-      child: TextField(
+      child: TextFormField(
         controller: controller,
         obscureText: isPassword,
+        validator: validator,
         decoration: InputDecoration(
           fillColor: Colors.white,
           border: InputBorder.none,

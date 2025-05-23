@@ -6,6 +6,8 @@ class CustomButton extends StatelessWidget {
   final double width;
   final double height;
   final double textSize;
+  final bool isLoading;
+
   const CustomButton({
     super.key,
     required this.text,
@@ -13,6 +15,7 @@ class CustomButton extends StatelessWidget {
     this.width = 120,
     this.height = 50,
     this.textSize = 15,
+    this.isLoading = false,
   });
 
   @override
@@ -21,17 +24,24 @@ class CustomButton extends StatelessWidget {
       width: width,
       height: height,
       child: ElevatedButton(
-        onPressed: onPressed ?? () {},
+        onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
         ),
-        child: Text(
-          text,
-          style: TextStyle(fontSize: textSize, color: Colors.black),
-        ),
+        child:
+            isLoading
+                ? SizedBox(
+                  height: 24,
+                  width: 24,
+                  child: CircularProgressIndicator(color: Colors.deepPurple),
+                )
+                : Text(
+                  text,
+                  style: TextStyle(fontSize: textSize, color: Colors.black),
+                ),
       ),
     );
   }

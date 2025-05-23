@@ -4,8 +4,8 @@ import 'package:qufi_driver_app/Controller/completed_orders_controller.dart';
 import 'package:qufi_driver_app/Controller/ongoing_orders_controller.dart';
 import 'package:qufi_driver_app/Core/Constants/app_colors.dart';
 import 'package:qufi_driver_app/Model/order_model.dart';
+import 'package:qufi_driver_app/Services/auth_services.dart';
 
-import 'package:qufi_driver_app/Services/storage_service.dart';
 import 'package:qufi_driver_app/View/login/login_screen.dart';
 import 'package:qufi_driver_app/Widgets/Dashboard/ongoing_order_card.dart';
 import 'package:qufi_driver_app/Widgets/Dashboard/orders_status.dart';
@@ -44,8 +44,9 @@ class _DriverDashboardContentState extends State<_DriverDashboardContent> {
       final completedController = context.read<CompletedOrdersController>();
 
       // Get token from storage
-      final credentials = await StorageService().getUserCredentials();
-      final token = credentials['token'];
+
+      final String? token = await AuthService().getToken();
+      print("🔹 Using Token for API Request: $token");
 
       // If no token exists, redirect to login immediately
       if (token == null || token.isEmpty) {

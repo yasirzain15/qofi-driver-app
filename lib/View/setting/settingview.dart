@@ -1,11 +1,17 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:qufi_driver_app/View/setting/image.dart';
+import 'package:flutter/services.dart';
+import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:qufi_driver_app/Services/auth_services.dart';
+import 'package:qufi_driver_app/Widgets/Login/custombutton.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:qufi_driver_app/Controller/setting/edit_name_controller.dart';
-import 'package:qufi_driver_app/Core/Constants/app_colors.dart';
 
+import 'package:qufi_driver_app/Core/Constants/app_colors.dart';
 import 'package:qufi_driver_app/View/setting/edit_name.dart';
 import 'package:qufi_driver_app/Widgets/setting/edit_pasword.dart';
 
@@ -17,40 +23,90 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class SettingsScreenState extends State<SettingsScreen> {
-  final NameController _nameController = NameController();
-  String? driverName;
-  String? _savedImagePath; // ✅ Store local file path instead of a URL
+  String name = '';
+  String username = '';
+  String image = '';
+  Uint8List? imageBytes;
 
   @override
   void initState() {
     super.initState();
-    _loadDriverName();
-    _loadSavedImage();
+    _loadUserData();
   }
 
-  /// ✅ Load saved driver name
-  Future<void> _loadDriverName() async {
-    String? name = await _nameController.getDriverName();
-    print("🔍 Retrieved Driver Name: $name");
-    if (!mounted) return;
+  void _showImagePicker(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Choose from Gallery'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImage(ImageSource.gallery);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera),
+                title: const Text('Take a Picture'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImage(ImageSource.camera);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+  // Future<void> _loadBlobImage() async {
+  //   final ByteData bytes = await rootBundle.load(blobUrl); // Replace `blobUrl` with your actual blob image URL
+  //   setState(() {
+  //     imageBytes = bytes.buffer.asUint8List();
+  //   });
+  // }
+
+  Future<void> _pickImage(ImageSource source) async {
+    final XFile? pickedFile = await ImagePicker().pickImage(source: source);
+    if (pickedFile == null) return;
+
+    final String imagePath = pickedFile.path;
+
     setState(() {
-      driverName = name ?? '';
+      image = imagePath; // ✅ Update UI instantly
     });
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("updated_image_path", imagePath);
+
+    // ✅ Save to gallery if taken from camera
+    if (source == ImageSource.camera) {
+      await ImageGallerySaverPlus.saveFile(imagePath);
+    }
   }
 
-  /// ✅ Load saved image from SharedPreferences (local path)
-  Future<void> _loadSavedImage() async {
+  Future<void> _loadUserData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? imagePath = prefs.getString("saved_image_path");
+
+    setState(() {
+      name = prefs.getString('name') ?? "Driver";
+      username = prefs.getString('username') ?? "DefaultUsername";
+      // ✅ Check for user-updated image first, fallback to API image
+      image =
+          prefs.getString('updated_image_path') ??
+          prefs.getString('api_image') ??
+          "";
+      // image = prefs.getString('image') ?? ""; // ✅ Show stored image
+    });
 
     if (kDebugMode) {
-      print("🔍 Retrieved Image Path in Settings: $imagePath");
-    }
-
-    if (imagePath != null && File(imagePath).existsSync()) {
-      setState(() {
-        _savedImagePath = imagePath;
-      });
+      print("✅ Loaded Name: $name"); // ✅ Corrected debug print
+      print("✅ Loaded Username: $username");
+      print("✅ Loaded Image URL: $image");
     }
   }
 
@@ -69,25 +125,43 @@ class SettingsScreenState extends State<SettingsScreen> {
         children: [
           const SizedBox(height: 30),
 
-          /// ✅ Display Image with Persistent Storage
-          ImageCaptureScreen(
-            savedImagePath: _savedImagePath,
-          ), // ✅ Pass local file path
+          GestureDetector(
+            onTap: () => _showImagePicker(context),
 
-          const SizedBox(height: 10),
+            child: CircleAvatar(
+              radius: 50,
+              backgroundImage:
+                  image.isNotEmpty
+                      ? (image.startsWith("http")
+                              ? NetworkImage(
+                                image,
+                              ) // ✅ Correctly load from network
+                              : FileImage(
+                                File(image),
+                              ) // ✅ Load if it's a local file
+                              )
+                          as ImageProvider
+                      : AssetImage("assets/default_profile.png"),
+            ),
+          ),
+          SizedBox(height: 10),
+
           Text(
-            driverName ?? "",
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            " ${name.isNotEmpty ? name : "Not Available"}",
+            style: TextStyle(fontSize: 18),
           ),
 
-          const SizedBox(height: 30),
+          Text(
+            " ${username.isNotEmpty ? username : "Not Available"}",
+            style: TextStyle(fontSize: 18, color: Colors.grey),
+          ),
 
           GestureDetector(
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const NameView()),
-              ).then((_) => _loadDriverName());
+              ).then((_) => _loadUserData()); // ✅ Refresh name after edit
             },
             child: const Card(
               margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -99,7 +173,6 @@ class SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
 
-          /// ✅ Edit Password Button
           GestureDetector(
             onTap: () {
               Navigator.push(
@@ -115,6 +188,12 @@ class SettingsScreenState extends State<SettingsScreen> {
                 trailing: Icon(Icons.arrow_forward_ios),
               ),
             ),
+          ),
+          SizedBox(height: 50),
+          CustomButton(
+            text: "Logout",
+
+            onPressed: () => AuthService().logout(context),
           ),
         ],
       ),

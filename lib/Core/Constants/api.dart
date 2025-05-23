@@ -7,4 +7,5 @@ class ApiConstants {
   static const String ongoingOrders = "$baseUrl/driver/getOrders/ongoing";
   static const String completedOrders = "$baseUrl/driver/getOrders/completed";
   static const String ongoingOrderDetails = "$baseUrl/driver/order/77/details";
+  static const String updatelocation = "$baseUrl/driver/update/location";
 }

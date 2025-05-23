@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:qufi_driver_app/Controller/setting/password.dart';
 import 'package:qufi_driver_app/Core/Constants/app_colors.dart';
 import 'package:qufi_driver_app/Core/Constants/utils/edit_password.dart';
-
 import 'package:qufi_driver_app/Model/setting/password_model.dart';
 import 'package:qufi_driver_app/View/Dashboard/dashboard_screen.dart';
 import 'package:qufi_driver_app/Widgets/Login/custombutton.dart';
@@ -25,34 +24,22 @@ class PasswordViewState extends State<PasswordView> {
       TextEditingController();
 
   final PasswordController passwordController = PasswordController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>(); // ✅ Form Key
   bool isLoading = false;
 
   void updatePassword() async {
-    String currentPassword = currentPasswordController.text.trim();
-    String newPassword = newPasswordController.text.trim();
-    String confirmPassword = confirmNewPasswordController.text.trim();
-
-    // ✅ Use Validation Class
-    String? currentError = PasswordValidator.validateCurrentPassword(
-      currentPassword,
-    );
-    String? newError = PasswordValidator.validateNewPassword(newPassword);
-    String? confirmError = PasswordValidator.validateConfirmPassword(
-      newPassword,
-      confirmPassword,
-    );
-
-    if (currentError != null || newError != null || confirmError != null) {
-      showError(currentError ?? newError ?? confirmError!);
+    if (!_formKey.currentState!.validate()) {
+      setState(() => isLoading = true);
+      // ✅ Validate all fields
       return;
     }
 
-    setState(() => isLoading = true);
+    setState(() => isLoading = false);
 
     PasswordModel passwordModel = PasswordModel(
-      currentPassword: currentPassword,
-      newPassword: newPassword,
-      confirmNewPassword: confirmPassword,
+      currentPassword: currentPasswordController.text.trim(),
+      newPassword: newPasswordController.text.trim(),
+      confirmNewPassword: confirmNewPasswordController.text.trim(),
     );
 
     String responseMessage = await passwordController.updatePassword(
@@ -74,15 +61,6 @@ class PasswordViewState extends State<PasswordView> {
     setState(() => isLoading = false);
   }
 
-  void showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message, style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.red,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,32 +74,45 @@ class PasswordViewState extends State<PasswordView> {
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            SizedBox(height: 20),
-            InputField(
-              isPassword: true,
-              controller: currentPasswordController,
-              label: 'Current Password',
-            ),
-            SizedBox(height: 20),
-            InputField(
-              isPassword: true,
-              controller: newPasswordController,
-              label: 'New Password',
-            ),
-            SizedBox(height: 20),
-            InputField(
-              isPassword: true,
-              controller: confirmNewPasswordController,
-              label: 'Confirm New Password',
-            ),
-            SizedBox(height: 20),
-            CustomButton(
-              text: 'Save',
-              onPressed: isLoading ? null : updatePassword,
-            ),
-          ],
+        child: Form(
+          key: _formKey, // ✅ Attach Form Key for validation
+          child: Column(
+            children: [
+              SizedBox(height: 20),
+              InputField(
+                isPassword: true,
+                validator:
+                    PasswordValidator
+                        .validateCurrentPassword, // ✅ Validation added
+                controller: currentPasswordController,
+                label: 'Current Password',
+              ),
+              SizedBox(height: 20),
+              InputField(
+                isPassword: true,
+                validator: PasswordValidator.validateNewPassword,
+                controller: newPasswordController,
+                label: 'New Password',
+              ),
+              SizedBox(height: 20),
+              InputField(
+                isPassword: true,
+                controller: confirmNewPasswordController,
+                label: 'Confirm New Password',
+                validator:
+                    (value) => PasswordValidator.validateConfirmPassword(
+                      newPasswordController.text,
+                      value ?? "",
+                    ),
+              ),
+              SizedBox(height: 20),
+              CustomButton(
+                text: 'Save',
+                isLoading: isLoading,
+                onPressed: isLoading ? null : updatePassword,
+              ),
+            ],
+          ),
         ),
       ),
     );
