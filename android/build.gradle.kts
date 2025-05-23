@@ -5,17 +5,19 @@ allprojects {
     }
 }
 
-val newBuildDir: Directory = rootProject.layout.buildDirectory.dir("../../build").get()
-rootProject.layout.buildDirectory.value(newBuildDir)
+// Set custom build directory
+val newBuildDir = rootProject.layout.buildDirectory.dir("../../build").get()
+rootProject.layout.buildDirectory.set(newBuildDir)
 
 subprojects {
-    val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
-    project.layout.buildDirectory.value(newSubprojectBuildDir)
-}
-subprojects {
-    project.evaluationDependsOn(":app")
+    // Set build directory for subprojects
+    layout.buildDirectory.set(newBuildDir.dir(name))
+
+    // Ensure `:app` is evaluated before others
+    evaluationDependsOn(":app")
 }
 
+// Define `clean` task
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
