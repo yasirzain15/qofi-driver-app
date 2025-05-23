@@ -19,11 +19,12 @@ class _OrderResponseScreenState extends State<OrderResponseScreen> {
   final String baseUrl =
       'https://staging.riseupkw.net/qofi/api/v1/driver/requestResponse';
 
-  Future<void> sendOrderResponse(BuildContext context, String action) async {
+  final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
+
+  Future<void> sendOrderResponse(String action) async {
     try {
-      print(
-        "🔹 Sending request: orderId=${widget.order_Id}, action=$action",
-      ); // Debugging
+      print("🔹 Sending request: orderId=${widget.order_Id}, action=$action");
 
       final response = await http.post(
         Uri.parse(baseUrl),
@@ -39,7 +40,7 @@ class _OrderResponseScreenState extends State<OrderResponseScreen> {
       print("🔹 Response Body: ${response.body}");
 
       if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        scaffoldMessengerKey.currentState?.showSnackBar(
           SnackBar(
             content: Text("✅ Order $action successfully!"),
             backgroundColor: Colors.green,
@@ -51,7 +52,7 @@ class _OrderResponseScreenState extends State<OrderResponseScreen> {
         String errorMessage =
             errorData?['message'] ?? "❌ Failed to $action order";
 
-        ScaffoldMessenger.of(context).showSnackBar(
+        scaffoldMessengerKey.currentState?.showSnackBar(
           SnackBar(
             content: Text(errorMessage),
             backgroundColor: Colors.red,
@@ -60,8 +61,8 @@ class _OrderResponseScreenState extends State<OrderResponseScreen> {
         );
       }
     } catch (e) {
-      print("❌ Error Sending Response: $e"); // Debugging
-      ScaffoldMessenger.of(context).showSnackBar(
+      print("❌ Error Sending Response: $e");
+      scaffoldMessengerKey.currentState?.showSnackBar(
         SnackBar(
           content: Text("❌ Error: $e"),
           backgroundColor: Colors.red,
@@ -73,49 +74,63 @@ class _OrderResponseScreenState extends State<OrderResponseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: AppColors.background,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      title: Center(child: Text("Order Request")),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text("🔹 Order ID: ${widget.order_Id}"),
-          Text("🔹 Customer: James Smith"),
-          Text("🔹 Address: 123 Main St"),
-        ],
+    return ScaffoldMessenger(
+      key: scaffoldMessengerKey,
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        body: AlertDialog(
+          backgroundColor: const Color.fromARGB(255, 237, 235, 235),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          title: Center(child: Text("Order Request")),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text("🔹 Order ID: ${widget.order_Id}"),
+              Text("🔹 Customer: James Smith"),
+              Text("🔹 Address: 123 Main St"),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                sendOrderResponse("accept");
+                Navigator.pop(context);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text(
+                "Accept",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                sendOrderResponse("reject");
+                Future.delayed(Duration(seconds: 2), () {
+                  Navigator.pop(context);
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 216, 215, 215),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text(
+                "Reject",
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+          ],
+        ),
       ),
-      actions: [
-        ElevatedButton(
-          onPressed: () {
-            sendOrderResponse(context, "accept");
-            Navigator.pop(context);
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blue,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-          child: const Text("Accept", style: TextStyle(color: Colors.white)),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            sendOrderResponse(context, "reject");
-            Future.delayed(Duration(seconds: 2), () {
-              Navigator.pop(context);
-            });
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromARGB(255, 216, 215, 215),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-          child: const Text("Reject", style: TextStyle(color: Colors.black)),
-        ),
-      ],
     );
   }
 }
