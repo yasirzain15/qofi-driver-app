@@ -33,10 +33,10 @@ class OrdersList extends StatelessWidget {
                     (context) => OrderDetailsView(
                       orderId:
                           orderDetailsController
-                              .orderDetails
-                              ?.driverOrderDetails
-                              .orderId ??
-                          0,
+                                  .orderDetails
+                                  ?.driverOrderDetails
+                                  .orderId
+                              as int,
                       token:
                           'Bearer 507|ZbWZSMD3HrWYCUlvyiJLu7aoUxUwbUYRQ9DbnXWp6447eddd',
                     ),
