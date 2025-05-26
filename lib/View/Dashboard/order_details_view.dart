@@ -45,7 +45,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
-          title: Text('Order #${widget.orderId}'),
+          title: Text('Order Details #${widget.orderId}'),
           centerTitle: true,
           backgroundColor: AppColors.background,
           elevation: 0,

@@ -31,36 +31,43 @@ class OrdersScreen extends StatelessWidget {
             ongoingController.isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : ListView.builder(
-                    itemCount: ongoingController
-                            .ongoingOrders?.data.driverOrders.length ??
-                        0,
-                    itemBuilder: (context, index) {
-                      final order = ongoingController
-                          .ongoingOrders!.data.driverOrders[index];
-                      return OrderCard(
-                        orderNo: order.orderNo,
-                        name: order.customerName,
-                        address: order.orderAddress,
-                        status: "Picked",
-                      );
-                    },
-                  ),
+                  itemCount:
+                      ongoingController
+                          .ongoingOrders
+                          ?.data
+                          .driverOrders
+                          .length ??
+                      0,
+                  itemBuilder: (context, index) {
+                    final order =
+                        ongoingController
+                            .ongoingOrders!
+                            .data
+                            .driverOrders[index];
+                    return OrderCard(
+                      orderNo: order.orderNo,
+                      name: order.customerName,
+                      address: order.orderAddress,
+                      status: "Picked",
+                    );
+                  },
+                ),
 
             // Completed Orders List
             completedController.isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : ListView.builder(
-                    itemCount: completedController.completedOrders.length,
-                    itemBuilder: (context, index) {
-                      final order = completedController.completedOrders[index];
-                      return OrderCard(
-                        orderNo: order.orderNo,
-                        name: order.customerName,
-                        address: order.orderAddress,
-                        status: "Picked",
-                      );
-                    },
-                  ),
+                  itemCount: completedController.completedOrders.length,
+                  itemBuilder: (context, index) {
+                    final order = completedController.completedOrders[index];
+                    return OrderCard(
+                      orderNo: order.orderNo,
+                      name: order.customerName,
+                      address: order.orderAddress,
+                      status: "Completed",
+                    );
+                  },
+                ),
           ],
         ),
       ),
