@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qufi_driver_app/Controller/ongoing_orders_controller.dart';
+import 'package:qufi_driver_app/Controller/order_details_controller.dart';
 import 'package:qufi_driver_app/Model/order_model.dart';
 import 'package:qufi_driver_app/View/Dashboard/order_details_view.dart';
 
@@ -17,6 +18,8 @@ class OrdersList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ongoingController = Provider.of<OngoingOrdersController>(context);
+    final OrderDetailsController orderDetailsController =
+        Provider.of<OrderDetailsController>(context, listen: false);
     return ListView.builder(
       itemCount: orders.length,
       itemBuilder: (context, index) {
@@ -25,7 +28,19 @@ class OrdersList extends StatelessWidget {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => OrderDetailsView()),
+              MaterialPageRoute(
+                builder:
+                    (context) => OrderDetailsView(
+                      orderId:
+                          orderDetailsController
+                              .orderDetails
+                              ?.driverOrderDetails
+                              .orderId ??
+                          0,
+                      token:
+                          'Bearer 503|ajDs7BcYD6I6zpPCvJBchuHYJLXS3AB1FAXT4soAd4002c17',
+                    ),
+              ),
             );
           },
           child: Card(

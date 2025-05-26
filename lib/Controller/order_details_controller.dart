@@ -9,7 +9,7 @@ class OrderDetailsController with ChangeNotifier {
   bool isLoading = false;
   String? errorMessage;
 
-  Future<void> fetchOrderDetails() async {
+  Future<void> fetchOrderDetails(int orderId) async {
     isLoading = true;
     errorMessage = null;
     notifyListeners();
