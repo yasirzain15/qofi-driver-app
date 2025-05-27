@@ -58,7 +58,7 @@ class LoginController {
       }
 
       // ✅ Navigate to Dashboard
-      Future.delayed(const Duration(milliseconds: 300), () {
+      Future.delayed(const Duration(milliseconds: 200), () {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => BottomNavScreen()),

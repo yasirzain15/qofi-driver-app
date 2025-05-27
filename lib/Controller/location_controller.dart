@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
 class LocationController extends ChangeNotifier {
-  // ✅ Request location permissions if not granted
+  // Request location permissions if not granted
 
   Future<bool> checkLocationPermission() async {
     LocationPermission permission = await Geolocator.checkPermission();
@@ -14,12 +14,13 @@ class LocationController extends ChangeNotifier {
       permission = await Geolocator.requestPermission();
     }
     if (permission == LocationPermission.denied) {
-      print(" Location permission denied by user.");
       return false;
     } else if (permission == LocationPermission.deniedForever) {
-      print(
-        " Location permission permanently denied. Redirecting to settings.",
-      );
+      if (kDebugMode) {
+        print(
+          " Location permission permanently denied. Redirecting to settings.",
+        );
+      }
       return false;
     }
 
@@ -29,7 +30,7 @@ class LocationController extends ChangeNotifier {
         isLocationEnabled;
   }
 
-  // ✅ Fetch the user's current latitude & longitude
+  //  Fetch the user's current latitude & longitude
   Future<Position?> getCurrentLocation() async {
     bool hasPermission = await checkLocationPermission();
     if (!hasPermission) {
@@ -66,11 +67,15 @@ class LocationController extends ChangeNotifier {
     LocationPermission permission = await Geolocator.checkPermission();
 
     if (!serviceEnabled) {
-      print("❌ Location services are OFF");
+      if (kDebugMode) {
+        print(" Location services are OFF");
+      }
     }
 
     if (permission == LocationPermission.denied) {
-      print("❌ Location permissions are DENIED");
+      if (kDebugMode) {
+        print(" Location permissions are DENIED");
+      }
     }
   }
 
@@ -99,11 +104,15 @@ class LocationController extends ChangeNotifier {
 
     Position? position = await getCurrentLocation();
     if (position != null) {
-      print(
-        "✅ Latitude: ${position.latitude}, Longitude: ${position.longitude}",
-      );
+      if (kDebugMode) {
+        print(
+          " Latitude: ${position.latitude}, Longitude: ${position.longitude}",
+        );
+      }
     } else {
-      print(" Unable to fetch location.");
+      if (kDebugMode) {
+        print(" Unable to fetch location.");
+      }
     }
   }
 

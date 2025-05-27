@@ -9,6 +9,7 @@ class LocationRequiredScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: Center(
           child: AlertDialog(
@@ -18,7 +19,7 @@ class LocationRequiredScreen extends StatelessWidget {
               TextButton(
                 onPressed: () async {
                   await Geolocator.openLocationSettings();
-                  Navigator.pop(context);
+                  // Navigator.pop(context);
                 },
                 child: Text("Go to Settings"),
               ),

@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:qufi_driver_app/Controller/setting/password.dart';
 import 'package:qufi_driver_app/Core/Constants/app_colors.dart';
@@ -27,7 +28,7 @@ class PasswordViewState extends State<PasswordView> {
       TextEditingController();
 
   final PasswordController passwordController = PasswordController();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>(); // ✅ Form Key
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>(); // Form Key
   bool isLoading = false;
 
   void updatePassword() async {
@@ -46,18 +47,18 @@ class PasswordViewState extends State<PasswordView> {
 
     String responseMessage = await passwordController.updatePassword(
       passwordModel,
-      "your-auth-token",
+      "",
     );
 
-    print("Raw Response: $responseMessage"); // ✅ Debugging output
+    if (kDebugMode) {
+      print("Raw Response: $responseMessage");
+    }
 
     try {
-      // ✅ Remove possible error prefix if present
       if (responseMessage.startsWith("Error: ")) {
         responseMessage = responseMessage.replaceFirst("Error: ", "");
       }
 
-      // ✅ Check if response is JSON formatted
       if (responseMessage.startsWith("{")) {
         final responseData = jsonDecode(responseMessage);
 
@@ -90,7 +91,6 @@ class PasswordViewState extends State<PasswordView> {
           );
         }
       } else {
-        // ✅ Handle plain text responses (like "Password updated successfully!")
         if (responseMessage.contains("Password updated successfully")) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -120,7 +120,9 @@ class PasswordViewState extends State<PasswordView> {
         }
       }
     } catch (e) {
-      print("JSON Parsing Error: $e");
+      if (kDebugMode) {
+        print("JSON Parsing Error: $e");
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(" An error occurred while processing the request"),
@@ -139,7 +141,7 @@ class PasswordViewState extends State<PasswordView> {
       appBar: AppBar(
         title: Padding(
           padding: const EdgeInsets.all(18.0),
-          child: Text('Update Password'),
+          child: Text('Update Password', style: TextStyle(fontSize: 18)),
         ),
         backgroundColor: AppColors.background,
       ),
@@ -147,41 +149,42 @@ class PasswordViewState extends State<PasswordView> {
         padding: EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: Column(
-            children: [
-              SizedBox(height: 20),
-
-              InputField(
-                isPassword: true,
-                validator: PasswordValidator.validateCurrentPassword,
-                controller: currentPasswordController,
-                label: 'Current Password',
-              ),
-              SizedBox(height: 20),
-              InputField(
-                isPassword: true,
-                validator: PasswordValidator.validateNewPassword,
-                controller: newPasswordController,
-                label: 'New Password',
-              ),
-              SizedBox(height: 20),
-              InputField(
-                isPassword: true,
-                controller: confirmNewPasswordController,
-                label: 'Confirm New Password',
-                validator:
-                    (value) => PasswordValidator.validateConfirmPassword(
-                      newPasswordController.text,
-                      value ?? "",
-                    ),
-              ),
-              SizedBox(height: 20),
-              CustomButton(
-                text: 'Save',
-                isLoading: isLoading,
-                onPressed: isLoading ? null : updatePassword,
-              ),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(height: 20),
+                InputField(
+                  isPassword: true,
+                  validator: PasswordValidator.validateCurrentPassword,
+                  controller: currentPasswordController,
+                  label: 'Current Password',
+                ),
+                SizedBox(height: 20),
+                InputField(
+                  isPassword: true,
+                  validator: PasswordValidator.validateNewPassword,
+                  controller: newPasswordController,
+                  label: 'New Password',
+                ),
+                SizedBox(height: 20),
+                InputField(
+                  isPassword: true,
+                  controller: confirmNewPasswordController,
+                  label: 'Confirm New Password',
+                  validator:
+                      (value) => PasswordValidator.validateConfirmPassword(
+                        newPasswordController.text,
+                        value ?? "",
+                      ),
+                ),
+                SizedBox(height: 20),
+                CustomButton(
+                  text: 'Save',
+                  isLoading: isLoading,
+                  onPressed: isLoading ? null : updatePassword,
+                ),
+              ],
+            ),
           ),
         ),
       ),
