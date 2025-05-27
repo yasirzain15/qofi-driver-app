@@ -65,7 +65,7 @@ class OrdersScreen extends StatelessWidget {
                       orderNo: order.orderNo,
                       name: order.customerName,
                       address: order.orderAddress,
-                      status: "Picked",
+                      status: "Completed",
                     );
                   },
                 ),

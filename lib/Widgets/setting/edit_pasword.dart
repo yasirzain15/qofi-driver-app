@@ -9,7 +9,6 @@ import 'package:qufi_driver_app/Core/Constants/utils/edit_password.dart';
 import 'package:qufi_driver_app/Model/setting/password_model.dart';
 import 'package:qufi_driver_app/View/Dashboard/dashboard_screen.dart';
 import 'package:qufi_driver_app/View/setting/settingview.dart';
-import 'package:qufi_driver_app/Widgets/Login/current_password.dart';
 import 'package:qufi_driver_app/Widgets/Login/custombutton.dart';
 import 'package:qufi_driver_app/Widgets/Login/inputfield.dart';
 
