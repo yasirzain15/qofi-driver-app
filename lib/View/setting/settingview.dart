@@ -7,8 +7,7 @@ import 'package:flutter/material.dart';
 
 import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
-import 'package:qufi_driver_app/Controller/update_location.dart';
+
 import 'package:qufi_driver_app/Services/auth_services.dart';
 import 'package:qufi_driver_app/Widgets/Login/custombutton.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -65,12 +64,6 @@ class SettingsScreenState extends State<SettingsScreen> {
       },
     );
   }
-  // Future<void> _loadBlobImage() async {
-  //   final ByteData bytes = await rootBundle.load(blobUrl); // Replace `blobUrl` with your actual blob image URL
-  //   setState(() {
-  //     imageBytes = bytes.buffer.asUint8List();
-  //   });
-  // }
 
   Future<void> _pickImage(ImageSource source) async {
     final XFile? pickedFile = await ImagePicker().pickImage(source: source);
@@ -125,19 +118,6 @@ class SettingsScreenState extends State<SettingsScreen> {
       ),
       body: Column(
         children: [
-          //           Consumer<UpdateLoController>(
-          //   builder: (context, locationController, child) {
-          //     if (locationController.currentPosition == null) {
-          //       return Text("Fetching location...");
-          //     }
-
-          //     return Text(
-          //       "Latitude: ${locationController.currentPosition!.latitude}, "
-          //       "Longitude: ${locationController.currentPosition!.longitude}",
-          //       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          //     );
-          //   },
-          // ),
           const SizedBox(height: 30),
 
           GestureDetector(
@@ -148,15 +128,9 @@ class SettingsScreenState extends State<SettingsScreen> {
               backgroundImage:
                   image.isNotEmpty
                       ? (image.startsWith("http")
-                              ? NetworkImage(
-                                image,
-                              ) // ✅ Correctly load from network
-                              : FileImage(
-                                File(image),
-                              ) // ✅ Load if it's a local file
-                              )
-                          as ImageProvider
-                      : AssetImage("assets/default_profile.png"),
+                          ? NetworkImage(image) as ImageProvider<Object>
+                          : FileImage(File(image)) as ImageProvider<Object>)
+                      : const AssetImage("assets/default_profile.png"),
             ),
           ),
           SizedBox(height: 10),

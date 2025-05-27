@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:qufi_driver_app/Controller/setting/password.dart';
 import 'package:qufi_driver_app/Core/Constants/app_colors.dart';
@@ -28,7 +29,7 @@ class PasswordViewState extends State<PasswordView> {
       TextEditingController();
 
   final PasswordController passwordController = PasswordController();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>(); // ✅ Form Key
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>(); // Form Key
   bool isLoading = false;
 
   void updatePassword() async {
@@ -50,7 +51,9 @@ class PasswordViewState extends State<PasswordView> {
       "",
     );
 
-    print("Raw Response: $responseMessage");
+    if (kDebugMode) {
+      print("Raw Response: $responseMessage");
+    }
 
     try {
       if (responseMessage.startsWith("Error: ")) {
@@ -118,7 +121,9 @@ class PasswordViewState extends State<PasswordView> {
         }
       }
     } catch (e) {
-      print("JSON Parsing Error: $e");
+      if (kDebugMode) {
+        print("JSON Parsing Error: $e");
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(" An error occurred while processing the request"),
