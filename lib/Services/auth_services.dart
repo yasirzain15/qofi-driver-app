@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -111,11 +113,14 @@ class AuthService {
         body: jsonEncode(locationData),
       );
 
+      print("🌐 API Request Sent! ✅ Status Code: ${response.statusCode}");
+      print("📜 Full Response Body: ${response.body}");
+
       if (response.statusCode == 200) {
-        print("✅ Location updated successfully: ${response.body}");
+        print("✅ Location updated successfully!");
         return true;
       } else {
-        print("❌ Failed to update location: ${response.body}");
+        print("❌ Backend rejected update: ${response.body}");
         return false;
       }
     } catch (e) {
@@ -136,5 +141,10 @@ class AuthService {
       MaterialPageRoute(builder: (context) => LoginScreen()),
       (route) => false, // ✅ Clears navigation history
     );
+  }
+
+  Future<String?> getDriverId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('driver_id'); // ✅ Retrieve stored driver ID
   }
 }

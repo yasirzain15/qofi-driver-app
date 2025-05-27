@@ -1,9 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
-class LocationController {
+class LocationController extends ChangeNotifier {
   // ✅ Request location permissions if not granted
+
   Future<bool> checkLocationPermission() async {
     LocationPermission permission = await Geolocator.checkPermission();
 
@@ -55,6 +58,19 @@ class LocationController {
         print(" Error fetching location: $e");
       }
       return null;
+    }
+  }
+
+  Future<void> checkLocationServices() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (!serviceEnabled) {
+      print("❌ Location services are OFF");
+    }
+
+    if (permission == LocationPermission.denied) {
+      print("❌ Location permissions are DENIED");
     }
   }
 

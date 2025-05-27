@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 
 import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:qufi_driver_app/Controller/update_location.dart';
 import 'package:qufi_driver_app/Services/auth_services.dart';
 import 'package:qufi_driver_app/Widgets/Login/custombutton.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -123,6 +125,19 @@ class SettingsScreenState extends State<SettingsScreen> {
       ),
       body: Column(
         children: [
+          //           Consumer<UpdateLoController>(
+          //   builder: (context, locationController, child) {
+          //     if (locationController.currentPosition == null) {
+          //       return Text("Fetching location...");
+          //     }
+
+          //     return Text(
+          //       "Latitude: ${locationController.currentPosition!.latitude}, "
+          //       "Longitude: ${locationController.currentPosition!.longitude}",
+          //       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          //     );
+          //   },
+          // ),
           const SizedBox(height: 30),
 
           GestureDetector(
