@@ -7,7 +7,6 @@ import 'package:qufi_driver_app/Core/Constants/api.dart';
 
 class UpdateLoController extends ChangeNotifier {
   Timer? _timer;
-  // 🔹 Replace with actual API URL
 
   UpdateLoController() {
     print("🚀 UpdateLocationController Initialized!");
