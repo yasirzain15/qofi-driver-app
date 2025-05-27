@@ -1,11 +1,15 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:qufi_driver_app/Controller/setting/password.dart';
 import 'package:qufi_driver_app/Core/Constants/app_colors.dart';
 import 'package:qufi_driver_app/Core/Constants/utils/edit_password.dart';
 import 'package:qufi_driver_app/Model/setting/password_model.dart';
 import 'package:qufi_driver_app/View/Dashboard/dashboard_screen.dart';
+import 'package:qufi_driver_app/View/setting/settingview.dart';
+import 'package:qufi_driver_app/Widgets/Login/current_password.dart';
 import 'package:qufi_driver_app/Widgets/Login/custombutton.dart';
 import 'package:qufi_driver_app/Widgets/Login/inputfield.dart';
 
@@ -29,12 +33,11 @@ class PasswordViewState extends State<PasswordView> {
 
   void updatePassword() async {
     if (!_formKey.currentState!.validate()) {
-      setState(() => isLoading = true);
-      // ✅ Validate all fields
+      setState(() => isLoading = false);
       return;
     }
 
-    setState(() => isLoading = false);
+    setState(() => isLoading = true);
 
     PasswordModel passwordModel = PasswordModel(
       currentPassword: currentPasswordController.text.trim(),
@@ -47,14 +50,83 @@ class PasswordViewState extends State<PasswordView> {
       "your-auth-token",
     );
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(responseMessage)));
+    print("Raw Response: $responseMessage"); // ✅ Debugging output
 
-    if (responseMessage.contains("Password updated successfully")) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => DriverDashboardScreen()),
+    try {
+      // ✅ Remove possible error prefix if present
+      if (responseMessage.startsWith("Error: ")) {
+        responseMessage = responseMessage.replaceFirst("Error: ", "");
+      }
+
+      // ✅ Check if response is JSON formatted
+      if (responseMessage.startsWith("{")) {
+        final responseData = jsonDecode(responseMessage);
+
+        if (responseData["success"] == false &&
+            responseData["message"] == "Current password is incorrect.") {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Current password is incorrect!"),
+              backgroundColor: Colors.red,
+            ),
+          );
+        } else if (responseData["success"] == true) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Password updated successfully!"),
+              backgroundColor: Colors.green,
+            ),
+          );
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => SettingsScreen()),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(responseData["message"] ?? "Something went wrong"),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } else {
+        // ✅ Handle plain text responses (like "Password updated successfully!")
+        if (responseMessage.contains("Password updated successfully")) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Password updated successfully!"),
+              backgroundColor: Colors.green,
+            ),
+          );
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => DriverDashboardScreen()),
+          );
+        } else if (responseMessage.contains("Current password is incorrect")) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Current password is incorrect!"),
+              backgroundColor: Colors.red,
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(responseMessage),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      print("JSON Parsing Error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(" An error occurred while processing the request"),
+          backgroundColor: Colors.red,
+        ),
       );
     }
 
@@ -75,15 +147,14 @@ class PasswordViewState extends State<PasswordView> {
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Form(
-          key: _formKey, // ✅ Attach Form Key for validation
+          key: _formKey,
           child: Column(
             children: [
               SizedBox(height: 20),
+
               InputField(
                 isPassword: true,
-                validator:
-                    PasswordValidator
-                        .validateCurrentPassword, // ✅ Validation added
+                validator: PasswordValidator.validateCurrentPassword,
                 controller: currentPasswordController,
                 label: 'Current Password',
               ),
