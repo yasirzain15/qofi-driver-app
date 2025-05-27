@@ -22,7 +22,7 @@ class OrderCompletionController with ChangeNotifier {
     notifyListeners();
 
     try {
-      final url = Uri.parse(ApiConstants.completeOrder);
+      final url = Uri.parse(ApiConstants.completedOrders);
       final headers = {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
