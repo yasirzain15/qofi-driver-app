@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qufi_driver_app/Controller/ongoing_orders_controller.dart';
-import 'package:qufi_driver_app/Controller/order_details_controller.dart';
 import 'package:qufi_driver_app/Model/order_model.dart';
 import 'package:qufi_driver_app/View/Dashboard/order_details_view.dart';
 
@@ -18,25 +17,39 @@ class OrdersList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ongoingController = Provider.of<OngoingOrdersController>(context);
-    final OrderDetailsController orderDetailsController =
-        Provider.of<OrderDetailsController>(context, listen: false);
+
     return ListView.builder(
       itemCount: orders.length,
       itemBuilder: (context, index) {
         final order = orders[index];
+
+        // Find the matching order in ongoingController's data
+        final driverOrder = ongoingController.ongoingOrders?.data.driverOrders
+            .firstWhere(
+              (o) => o.orderNo == order.orderNo,
+              orElse:
+                  () =>
+                      throw Exception(
+                        'Order not found',
+                      ), // Throw exception if not found
+            );
+
         return GestureDetector(
           onTap: () {
+            if (driverOrder == null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Order details not available')),
+              );
+              return;
+            }
+
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder:
                     (context) => OrderDetailsView(
                       orderId:
-                          orderDetailsController
-                                  .orderDetails
-                                  ?.driverOrderDetails
-                                  .orderId
-                              as int,
+                          driverOrder.orderId, // Use orderId from ongoing order
                       token:
                           'Bearer 507|ZbWZSMD3HrWYCUlvyiJLu7aoUxUwbUYRQ9DbnXWp6447eddd',
                     ),
@@ -49,46 +62,27 @@ class OrdersList extends StatelessWidget {
             child: ListTile(
               title: Text(
                 'Order #${order.orderNo}',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(driverOrder?.customerName ?? 'No customer name'),
                   Text(
-                    ongoingController
-                            .ongoingOrders
-                            ?.data
-                            .driverOrders[0]
-                            .customerName
-                        as String,
-                  ),
-                  Text(
-                    ongoingController
-                            .ongoingOrders
-                            ?.data
-                            .driverOrders[0]
-                            .orderAddress
-                        as String,
+                    driverOrder?.orderAddress ?? 'No address',
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
               trailing: Container(
-                padding: EdgeInsets.all(5),
+                padding: const EdgeInsets.all(5),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   color: Colors.grey.withOpacity(.4),
                 ),
-                child: Text("Picked"),
+                child: const Text("Picked"),
               ),
-              // trailing: IconButton(
-              //   icon: Icon(
-              //     order.picked ? Icons.check_box : Icons.check_box_outline_blank,
-              //     color: Colors.blue,
-              //   ),
-              //   onPressed: () => onPickPressed(order.orderNo),
-              // ),
             ),
           ),
         );
