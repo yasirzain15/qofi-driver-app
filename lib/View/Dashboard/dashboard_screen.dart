@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // Needed for SystemNavigator
 import 'package:provider/provider.dart';
 import 'package:qufi_driver_app/Controller/completed_orders_controller.dart';
 
@@ -6,7 +7,6 @@ import 'package:qufi_driver_app/Controller/ongoing_orders_controller.dart';
 import 'package:qufi_driver_app/Core/Constants/app_colors.dart';
 import 'package:qufi_driver_app/Model/order_model.dart';
 import 'package:qufi_driver_app/Services/auth_services.dart';
-
 import 'package:qufi_driver_app/View/login/login_screen.dart';
 import 'package:qufi_driver_app/Widgets/Dashboard/ongoing_order_card.dart';
 import 'package:qufi_driver_app/Widgets/Dashboard/orders_status.dart';
@@ -30,7 +30,7 @@ class _DriverDashboardContent extends StatefulWidget {
 }
 
 class _DriverDashboardContentState extends State<_DriverDashboardContent> {
-  final int _selectedIndex = 1; // Default to Orders tab
+  final int _selectedIndex = 1;
   final Map<String, bool> _pickedStates = {};
 
   @override
@@ -45,12 +45,9 @@ class _DriverDashboardContentState extends State<_DriverDashboardContent> {
       final ongoingController = context.read<OngoingOrdersController>();
       final completedController = context.read<CompletedOrdersController>();
 
-      // Get token from storage
-
       final String? token = await AuthService().getToken();
       print("🔹 Using Token for API Request: $token");
 
-      // If no token exists, redirect to login immediately
       if (token == null || token.isEmpty) {
         if (mounted) {
           Navigator.push(
@@ -61,7 +58,6 @@ class _DriverDashboardContentState extends State<_DriverDashboardContent> {
         return;
       }
 
-      // Fetch orders if token exists
       await Future.wait([
         ongoingController.fetchOngoingOrders(token),
         completedController.fetchCompletedOrders(token),
@@ -69,66 +65,70 @@ class _DriverDashboardContentState extends State<_DriverDashboardContent> {
     } catch (e) {
       debugPrint('Error fetching orders: $e');
       if (mounted) {
-        // Show error message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to load orders: ${e.toString()}')),
         );
 
-        // If it's an auth error, redirect to login
         if (e.toString().contains('401') ||
             e.toString().contains('Unauthorized')) {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) {
-                return const LoginScreen();
-              },
-            ),
+            MaterialPageRoute(builder: (context) => const LoginScreen()),
           );
         }
       }
     }
   }
 
-  void _onPickPressed(String orderId) => setState(() {
-    _pickedStates[orderId] = !(_pickedStates[orderId] ?? false);
-  });
+  void _onPickPressed(String orderId) {
+    setState(() {
+      _pickedStates[orderId] = !(_pickedStates[orderId] ?? false);
+    });
+  }
+
+  // Function to exit the app
+  void _exitApp() {
+    SystemNavigator.pop();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<OngoingOrdersController, CompletedOrdersController>(
-      builder: (context, ongoing, completed, _) {
-        final ongoingOrders =
-            ongoing.ongoingOrders?.data.driverOrders
-                .map(
-                  (order) => OrderModel.fromDriverOrder(
-                    order,
-                    'Ongoing',
-                    picked: _pickedStates[order.orderNo] ?? false,
-                  ),
-                )
-                .toList() ??
-            [];
+    return GestureDetector(
+      onDoubleTap: _exitApp,
+      child: Consumer2<OngoingOrdersController, CompletedOrdersController>(
+        builder: (context, ongoing, completed, _) {
+          final ongoingOrders =
+              ongoing.ongoingOrders?.data.driverOrders
+                  .map(
+                    (order) => OrderModel.fromDriverOrder(
+                      order,
+                      'Ongoing',
+                      picked: _pickedStates[order.orderNo] ?? false,
+                    ),
+                  )
+                  .toList() ??
+              [];
 
-        final completedOrders =
-            completed.completedOrders
-                .map(
-                  (order) => OrderModel.fromCompletedOrder(
-                    order,
-                    'Completed',
-                    picked: _pickedStates[order.orderNo] ?? false,
-                  ),
-                )
-                .toList();
+          final completedOrders =
+              completed.completedOrders
+                  .map(
+                    (order) => OrderModel.fromCompletedOrder(
+                      order,
+                      'Completed',
+                      picked: _pickedStates[order.orderNo] ?? false,
+                    ),
+                  )
+                  .toList();
 
-        return _buildScaffold(
-          context,
-          ongoing,
-          completed,
-          ongoingOrders,
-          completedOrders,
-        );
-      },
+          return _buildScaffold(
+            context,
+            ongoing,
+            completed,
+            ongoingOrders,
+            completedOrders,
+          );
+        },
+      ),
     );
   }
 
@@ -186,70 +186,95 @@ class _DriverDashboardContentState extends State<_DriverDashboardContent> {
       child: Column(
         children: [
           const ProfileSection(
-            driverName: 'John Doe', // Replace with dynamic data
+            driverName: 'John Doe',
             totalOrders: 15,
             completedCount: 10,
             ongoingCount: 2,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            spacing: 20,
             children: [
-              Column(
-                children: [
-                  Text(
-                    (ongoingOrders.length + completedOrders.length).toString(),
-                    style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
-                  ),
-                  Text("Orders", style: TextStyle(color: Colors.grey)),
-                ],
+              _buildOrderStat(
+                "Orders",
+                (ongoingOrders.length + completedOrders.length).toString(),
               ),
-              Column(
-                children: [
-                  Text(
-                    completedOrders.length.toString(),
-                    style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
-                  ),
-                  Text("Completed", style: TextStyle(color: Colors.grey)),
-                ],
-              ),
-              Column(
-                children: [
-                  Text(
-                    ongoingOrders.length.toString(),
-                    style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
-                  ),
-                  Text("Ongoing", style: TextStyle(color: Colors.grey)),
-                ],
-              ),
+              const SizedBox(width: 20),
+              _buildOrderStat("Completed", completedOrders.length.toString()),
+              const SizedBox(width: 20),
+              _buildOrderStat("Ongoing", ongoingOrders.length.toString()),
             ],
           ),
-
-          Row(
-            children: [
-              Container(
-                margin: EdgeInsets.only(left: 15, top: 10, bottom: 10),
-                child: Text(
-                  "Ongoing",
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 21,
-                    fontWeight: FontWeight.w700,
+          const SizedBox(height: 16),
+          if (ongoingOrders.isNotEmpty) ...[
+            Container(
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.only(left: 15, top: 10, bottom: 10),
+              child: const Text(
+                "Ongoing",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 21,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: _fetchOrders,
+                child: OrdersList(
+                  orders: ongoingOrders,
+                  onPickPressed: _onPickPressed,
+                ),
+              ),
+            ),
+          ] else ...[
+            Expanded(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.assignment_outlined,
+                        size: 60,
+                        color: Colors.grey[400],
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        "No Ongoing Orders",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        "You currently don't have any ongoing orders.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 15, color: Colors.grey[500]),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ],
-          ),
-
-          Expanded(
-            child: OrdersList(
-              orders: ongoingOrders,
-              onPickPressed: _onPickPressed,
             ),
-          ),
+          ],
         ],
       ),
+    );
+  }
+
+  Widget _buildOrderStat(String label, String value) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: const TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+        ),
+        Text(label, style: const TextStyle(color: Colors.grey)),
+      ],
     );
   }
 }
