@@ -14,11 +14,11 @@ class MarkCompleteButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
-      child: Consumer<OrderCompletionController>(
-        builder: (context, controller, _) {
-          return ElevatedButton(
+    return Consumer<OrderCompletionController>(
+      builder: (context, controller, _) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+          child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.green,
               padding: const EdgeInsets.symmetric(vertical: 16),
@@ -42,9 +42,9 @@ class MarkCompleteButton extends StatelessWidget {
                         color: Colors.white,
                       ),
                     ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 

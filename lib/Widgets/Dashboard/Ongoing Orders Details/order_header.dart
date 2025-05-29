@@ -29,13 +29,9 @@ class OrderHeader extends StatelessWidget {
                 ),
                 Chip(
                   label: Text(
-                    orderDetails.paymentStatus,
-                    style: const TextStyle(color: Colors.white),
+                    orderDetails.orderStatus,
+                    style: const TextStyle(color: Colors.black),
                   ),
-                  backgroundColor:
-                      orderDetails.paymentStatus == "Pending"
-                          ? Colors.orange
-                          : Colors.green,
                 ),
               ],
             ),

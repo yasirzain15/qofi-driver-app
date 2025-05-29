@@ -65,7 +65,7 @@ class OrderItems extends StatelessWidget {
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  '${orderDetails.amount} ${orderDetails.currency}',
+                  '${orderDetails.currency} ${orderDetails.amount}',
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,

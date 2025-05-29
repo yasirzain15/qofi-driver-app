@@ -27,6 +27,7 @@ class DriverOrderDetails {
   final int orderId;
   final String currency;
   final String orderNo;
+  final String orderStatus;
   final String shopId;
   final String shopName;
   final String address;
@@ -44,6 +45,7 @@ class DriverOrderDetails {
     required this.orderId,
     required this.currency,
     required this.orderNo,
+    required this.orderStatus,
     required this.shopId,
     required this.shopName,
     required this.address,
@@ -63,6 +65,7 @@ class DriverOrderDetails {
       orderId: json['order_id'],
       currency: json['currency'],
       orderNo: json['order_no'],
+      orderStatus: json['order_status'],
       shopId: json['shop_id'],
       shopName: json['shop_name'],
       address: json['address'],

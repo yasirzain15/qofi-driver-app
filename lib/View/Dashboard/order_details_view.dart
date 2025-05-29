@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:qufi_driver_app/Controller/ongoing_orders_controller.dart';
 import 'package:qufi_driver_app/Controller/order_completion_controller.dart';
 import 'package:qufi_driver_app/Controller/order_details_controller.dart';
 import 'package:qufi_driver_app/Core/Constants/app_colors.dart';
@@ -34,6 +35,10 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
         listen: false,
       ).fetchOrderDetails(widget.orderId);
     });
+    Provider.of<OngoingOrdersController>(
+      context,
+      listen: false,
+    ).fetchOngoingOrders(widget.token);
   }
 
   @override
@@ -41,11 +46,22 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => OrderCompletionController()),
+        ChangeNotifierProvider(create: (_) => OngoingOrdersController()),
       ],
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
-          title: Text('Order Details #${widget.orderId}'),
+          title: Consumer<OrderDetailsController>(
+            builder: (context, controller, _) {
+              // Show loading text while fetching, then show orderNo when available
+              if (controller.isLoading || controller.orderDetails == null) {
+                return const Text('Loading order...');
+              }
+              return Text(
+                'Order #${controller.orderDetails!.driverOrderDetails.orderNo}',
+              );
+            },
+          ),
           centerTitle: true,
           backgroundColor: AppColors.background,
           elevation: 0,
