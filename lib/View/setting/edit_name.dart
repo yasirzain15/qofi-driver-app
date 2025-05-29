@@ -1,17 +1,15 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:qufi_driver_app/Core/Constants/app_colors.dart';
-
 import 'package:qufi_driver_app/View/setting/settingview.dart';
 import 'package:qufi_driver_app/Widgets/Login/custombutton.dart';
 import 'package:qufi_driver_app/Widgets/Login/inputfield.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Controller/setting/edit_name_controller.dart';
 
 class NameView extends StatefulWidget {
-  const NameView({super.key});
+  final String token; // ✅ Token required for API calls
+
+  const NameView({super.key, required this.token});
 
   @override
   NameViewState createState() => NameViewState();
@@ -19,43 +17,54 @@ class NameView extends StatefulWidget {
 
 class NameViewState extends State<NameView> {
   final TextEditingController nameController = TextEditingController();
-  final NameController nameControllerInstance = NameController();
+  final NameService nameService = NameService();
   bool isLoading = false;
+
   void showError(String message) {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text(message)));
   }
 
-  void updateName() async {
+  Future<void> updateName() async {
     if (nameController.text.trim().isEmpty) {
-      showError("Name cannot be empty!"); // ✅ Show error for empty name
+      showError("Name cannot be empty!");
       return;
     }
 
     setState(() => isLoading = true);
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(
-      "name",
-      nameController.text.trim(),
-    ); // ✅ Save name locally
-
-    print("✅ Saved Name Locally: ${prefs.getString("name")}"); // ✅ Debugging
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          "✅ Name updated successfully!", // ✅ Use correct variable
-        ),
-      ),
+    String newName = nameController.text.trim();
+    Map<String, dynamic> result = await nameService.updateUserName(
+      newName,
+      widget.token,
     );
 
-    setState(() => isLoading = false);
-    Navigator.pushReplacement(
+    ScaffoldMessenger.of(
       context,
-      MaterialPageRoute(builder: (context) => SettingsScreen()),
-    ).then((_) {});
+    ).showSnackBar(SnackBar(content: Text(result['message'])));
+
+    if (result['success']) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => SettingsScreen()),
+      );
+    }
+
+    setState(() => isLoading = false);
+  }
+
+  Future<void> loadLocalName() async {
+    String? localName = await nameService.getLocalUserName();
+    if (localName != null) {
+      setState(() => nameController.text = localName);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadLocalName();
   }
 
   @override

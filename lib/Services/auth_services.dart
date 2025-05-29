@@ -2,17 +2,16 @@
 
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:qufi_driver_app/Core/Constants/api.dart';
-import 'package:qufi_driver_app/Model/setting/drivermodel.dart';
-import 'package:qufi_driver_app/Services/storage_service.dart';
-import 'package:qufi_driver_app/View/login/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:qufi_driver_app/Core/Constants/api.dart';
+
+import 'package:qufi_driver_app/View/login/login_screen.dart';
+import 'package:flutter/material.dart';
+
+import '../Model/setting/drivermodel.dart';
 
 class AuthService {
-  final _storageService = StorageService();
-
   /// Login Function: Stores Token & User Info
   Future<Map<String, dynamic>> login(String userInput, String password) async {
     try {
@@ -46,7 +45,7 @@ class AuthService {
         }
 
         final driverData = data['data']['driver'];
-        final String? token = data['data']['token']; //  Retrieve token
+        final String? token = data['data']['token']; // ✅ Retrieve token
 
         if (token == null || token.isEmpty) {
           return {'success': false, 'message': 'Token missing or invalid.'};
@@ -56,25 +55,18 @@ class AuthService {
 
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString("auth_token", token);
-        await prefs.setString("name", driverData["name"] ?? "Driver");
+        await prefs.setString(
+          "name",
+          driverData["name"] ?? "Driver",
+        ); // ✅ Store user name
         await prefs.setString("username", driverData["username"]);
         await prefs.setString("image", driverData["image"]);
-        String? storedImageUrl = prefs.getString("image");
-        if (kDebugMode) {
-          print(" Stored Image URL: $storedImageUrl");
-        }
 
         if (kDebugMode) {
-          print(" Stored Auth Token: $token");
+          print("✅ Stored Auth Token: $token");
+          print("✅ Stored Name: ${prefs.getString("name")}");
+          print("✅ Stored Username: ${prefs.getString("username")}");
         }
-        if (kDebugMode) {
-          print(" Stored Username: ${prefs.getString("username")}");
-        }
-        if (kDebugMode) {
-          print(" Stored Image URL: ${prefs.getString("image")}");
-        }
-
-        await _storageService.saveUserCredentials(userInput, password, token);
 
         return {'success': true, 'token': token, 'driver': driver};
       } else {
@@ -85,34 +77,38 @@ class AuthService {
       }
     } catch (e) {
       if (kDebugMode) {
-        print(" Login Error: $e");
+        print("❌ Login Error: $e");
       }
       return {'success': false, 'message': 'Unexpected error occurred.'};
     }
   }
 
-  ///  Retrieves Stored Token
+  /// Retrieve stored authentication token
   Future<String?> getToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("auth_token");
 
     if (kDebugMode) {
-      print(" Retrieved Token from Storage: $token");
-    } // Debugging
+      print("🔑 Retrieved Token from Storage: $token");
+    }
 
     return token;
   }
 
-  ///  Sends Driver Location to API
+  /// Retrieve stored user name
+  Future<String?> getStoredUserName() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString("name"); // ✅ Retrieve stored name
+  }
+
+  /// Sends Driver Location to API
   Future<bool> sendDriverLocation(
     Map<String, dynamic> locationData,
     String token,
   ) async {
-    String? token = await getToken(); //  Retrieve stored token
-
-    if (token == null || token.isEmpty) {
+    if (token.isEmpty) {
       if (kDebugMode) {
-        print(" Token missing! Cannot send location.");
+        print("❌ Token missing! Cannot send location.");
       }
       return false;
     }
@@ -128,49 +124,37 @@ class AuthService {
       );
 
       if (kDebugMode) {
-        print("🌐 API Request Sent!  Status Code: ${response.statusCode}");
-      }
-      if (kDebugMode) {
-        print("📜 Full Response Body: ${response.body}");
+        print("📡 Location Update Status: ${response.statusCode}");
       }
 
-      if (response.statusCode == 200) {
-        if (kDebugMode) {
-          print(" Location updated successfully!");
-        }
-        return true;
-      } else {
-        if (kDebugMode) {
-          print(" Backend rejected update: ${response.body}");
-        }
-        return false;
-      }
+      return response.statusCode == 200;
     } catch (e) {
       if (kDebugMode) {
-        print(" Error sending location: $e");
+        print("❌ Error sending location: $e");
       }
       return false;
     }
   }
 
+  /// Logout Function: Clears Stored Data
   Future<void> logout(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.clear(); //  Remove all stored user data
+    await prefs.clear(); // ✅ Remove stored user data
 
     if (kDebugMode) {
-      print(" User logged out successfully.");
+      print("🚪 User logged out successfully.");
     }
 
-    // Redirect to login screen
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => LoginScreen()),
-      (route) => false, //  Clears navigation history
+      (route) => false, // ✅ Clears navigation history
     );
   }
 
+  /// Retrieve stored Driver ID
   Future<String?> getDriverId() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('driver_id'); //  Retrieve stored driver ID
+    return prefs.getString('driver_id'); // ✅ Retrieve stored driver ID
   }
 }

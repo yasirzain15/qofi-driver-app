@@ -110,6 +110,17 @@ class PasswordViewState extends State<PasswordView> {
               backgroundColor: Colors.red,
             ),
           );
+        } else if (responseMessage.contains(
+          "New password cannot be the same as the current password",
+        )) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                "New password cannot be the same as the current password!",
+              ),
+              backgroundColor: Colors.red,
+            ),
+          );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -125,7 +136,7 @@ class PasswordViewState extends State<PasswordView> {
       }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(" An error occurred while processing the request"),
+          content: Text(" something went wrong"),
           backgroundColor: Colors.red,
         ),
       );
