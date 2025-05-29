@@ -7,14 +7,12 @@ import 'package:flutter/material.dart';
 
 import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:image_picker/image_picker.dart';
-
-import 'package:qufi_driver_app/Services/auth_services.dart';
-import 'package:qufi_driver_app/Widgets/Login/custombutton.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:qufi_driver_app/Core/Constants/app_colors.dart';
+import 'package:qufi_driver_app/Services/auth_services.dart';
 import 'package:qufi_driver_app/View/setting/edit_name.dart';
+import 'package:qufi_driver_app/Widgets/Login/custombutton.dart';
 import 'package:qufi_driver_app/Widgets/setting/edit_pasword.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
