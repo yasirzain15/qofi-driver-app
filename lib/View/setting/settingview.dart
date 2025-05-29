@@ -33,6 +33,7 @@ class SettingsScreenState extends State<SettingsScreen> {
   void initState() {
     super.initState();
     _loadUserData();
+    getStoredImage();
   }
 
   void _showImagePicker(BuildContext context) {
@@ -65,6 +66,11 @@ class SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  Future<String?> getStoredImage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString("saved_image_url");
+  }
+
   Future<void> _pickImage(ImageSource source) async {
     final XFile? pickedFile = await ImagePicker().pickImage(source: source);
     if (pickedFile == null) return;
@@ -90,6 +96,7 @@ class SettingsScreenState extends State<SettingsScreen> {
     setState(() {
       name = prefs.getString('name') ?? "Driver";
       username = prefs.getString('username') ?? "DefaultUsername";
+      image = prefs.getString("saved_image_url") ?? ""; //
       // ✅ Check for user-updated image first, fallback to API image
       image =
           prefs.getString('updated_image_path') ??
@@ -122,17 +129,27 @@ class SettingsScreenState extends State<SettingsScreen> {
 
           GestureDetector(
             onTap: () => _showImagePicker(context),
-
             child: CircleAvatar(
               radius: 50,
               backgroundImage:
                   image.isNotEmpty
                       ? (image.startsWith("http")
-                          ? NetworkImage(image) as ImageProvider<Object>
-                          : FileImage(File(image)) as ImageProvider<Object>)
-                      : const AssetImage("assets/default_profile.png"),
+                          ? NetworkImage(image)
+                          : FileImage(File(image)))
+                      : AssetImage("assets/default_profile.png"),
             ),
           ),
+
+          //   child: CircleAvatar(
+          //     radius: 50,
+          //     backgroundImage:
+          //         image.isNotEmpty
+          //             ? (image.startsWith("http")
+          //                 ? NetworkImage(image) as ImageProvider<Object>
+          //                 : FileImage(File(image)) as ImageProvider<Object>)
+          //             : const AssetImage("assets/default_profile.png"),
+          //   ),
+          // ),
           SizedBox(height: 10),
 
           Text(
@@ -144,12 +161,17 @@ class SettingsScreenState extends State<SettingsScreen> {
             " ${username.isNotEmpty ? username : "Not Available"}",
             style: TextStyle(fontSize: 18, color: Colors.grey),
           ),
-
           GestureDetector(
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const NameView()),
+                MaterialPageRoute(
+                  builder:
+                      (context) => NameView(
+                        token:
+                            "577|hCQkCcXVHaA7108CTceQgDLIRftiTfjl5rQMSMFp886f56b0",
+                      ),
+                ),
               ).then((_) => _loadUserData()); // ✅ Refresh name after edit
             },
             child: const Card(
