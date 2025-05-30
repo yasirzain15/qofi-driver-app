@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'package:qufi_driver_app/Core/Constants/app_colors.dart';
-
 class OrderResponseScreen extends StatefulWidget {
   final String order_Id;
 
