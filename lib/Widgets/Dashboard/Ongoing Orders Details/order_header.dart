@@ -21,7 +21,7 @@ class OrderHeader extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Order #${orderDetails.orderId}',
+                  'Order Status',
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,

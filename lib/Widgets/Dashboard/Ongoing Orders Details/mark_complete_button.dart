@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:qufi_driver_app/Controller/order_completion_controller.dart';
+import 'package:qufi_driver_app/Controller/marking_complete_controller.dart';
 import 'package:qufi_driver_app/Controller/ongoing_orders_controller.dart';
 
 class MarkCompleteButton extends StatelessWidget {
@@ -15,7 +15,7 @@ class MarkCompleteButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<OrderCompletionController>(
+    return Consumer<MarkCompletionController>(
       builder: (context, controller, _) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
@@ -48,7 +48,7 @@ class MarkCompleteButton extends StatelessWidget {
   }
 
   Future<void> _completeOrder(BuildContext context) async {
-    final completionController = Provider.of<OrderCompletionController>(
+    final markCompletionController = Provider.of<MarkCompletionController>(
       context,
       listen: false,
     );
@@ -57,7 +57,7 @@ class MarkCompleteButton extends StatelessWidget {
       listen: false,
     );
 
-    final success = await completionController.completeOrder(
+    final success = await markCompletionController.completeOrder(
       token: token,
       orderId: orderId,
     );
@@ -69,7 +69,7 @@ class MarkCompleteButton extends StatelessWidget {
         content: Text(
           success
               ? 'Order completed successfully!'
-              : completionController.errorMessage,
+              : markCompletionController.errorMessage,
         ),
         backgroundColor: success ? Colors.green : Colors.red,
         duration: const Duration(seconds: 3),

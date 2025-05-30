@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qufi_driver_app/Controller/completed_orders_controller.dart';
 import 'package:qufi_driver_app/Controller/location_controller.dart';
+import 'package:qufi_driver_app/Controller/marking_complete_controller.dart';
 import 'package:qufi_driver_app/Controller/ongoing_orders_controller.dart';
 import 'package:qufi_driver_app/Controller/order_details_controller.dart';
 import 'package:qufi_driver_app/Controller/update_location.dart';
@@ -46,6 +47,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => MarkCompletionController()),
         ChangeNotifierProvider(create: (_) => LocationController()),
         ChangeNotifierProvider(
           create: (_) => UpdateLoController(),

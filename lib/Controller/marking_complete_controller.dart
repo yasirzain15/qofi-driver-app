@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:qufi_driver_app/Core/Constants/api.dart';
 
-class OrderCompletionController with ChangeNotifier {
+class MarkCompletionController with ChangeNotifier {
   bool _isLoading = false;
   String _errorMessage = '';
   bool _isCompleted = false;
