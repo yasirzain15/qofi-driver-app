@@ -48,6 +48,7 @@ class OrdersList extends StatelessWidget {
               MaterialPageRoute(
                 builder:
                     (context) => OrderDetailsView(
+                      orderNo: order.orderNo,
                       orderId:
                           driverOrder.orderId, // Use orderId from ongoing order
                       token:

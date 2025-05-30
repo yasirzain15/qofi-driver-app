@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qufi_driver_app/Controller/order_completion_controller.dart';
+import 'package:qufi_driver_app/Controller/ongoing_orders_controller.dart';
 
 class MarkCompleteButton extends StatelessWidget {
   final int orderId;
@@ -28,9 +29,7 @@ class MarkCompleteButton extends StatelessWidget {
               minimumSize: const Size(double.infinity, 50),
             ),
             onPressed:
-                controller.isLoading
-                    ? null
-                    : () => _completeOrder(context, controller),
+                controller.isLoading ? null : () => _completeOrder(context),
             child:
                 controller.isLoading
                     ? const CircularProgressIndicator(color: Colors.white)
@@ -48,29 +47,41 @@ class MarkCompleteButton extends StatelessWidget {
     );
   }
 
-  Future<void> _completeOrder(
-    BuildContext context,
-    OrderCompletionController controller,
-  ) async {
-    final success = await controller.completeOrder(
+  Future<void> _completeOrder(BuildContext context) async {
+    final completionController = Provider.of<OrderCompletionController>(
+      context,
+      listen: false,
+    );
+    final ongoingController = Provider.of<OngoingOrdersController>(
+      context,
+      listen: false,
+    );
+
+    final success = await completionController.completeOrder(
       token: token,
       orderId: orderId,
     );
 
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            success ? 'Order completed successfully!' : controller.errorMessage,
-          ),
-          backgroundColor: success ? Colors.green : Colors.red,
-          duration: const Duration(seconds: 3),
-        ),
-      );
+    if (!context.mounted) return;
 
-      if (success) {
-        await Future.delayed(const Duration(seconds: 1));
-        if (context.mounted) Navigator.of(context).pop();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          success
+              ? 'Order completed successfully!'
+              : completionController.errorMessage,
+        ),
+        backgroundColor: success ? Colors.green : Colors.red,
+        duration: const Duration(seconds: 3),
+      ),
+    );
+
+    if (success) {
+      // Refresh ongoing orders before navigating back
+      await ongoingController.fetchOngoingOrders(token);
+
+      if (context.mounted) {
+        Navigator.of(context).pop(true); // Pass result to trigger refresh
       }
     }
   }
